@@ -10,7 +10,7 @@ class JobUpdates(models.Model):
     location = models.CharField(max_length=1024, blank=False)
     job_url = models.URLField(blank=False)
     description = models.CharField(max_length=10000, null=True)
-    posted_at = models.DateField(default=datetime.date.today())
+    posted_at = models.DateField(auto_now_add=True)
     job_type = models.CharField(max_length=1024, blank=False)
 
     class Meta:
