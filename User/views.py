@@ -22,7 +22,7 @@ class UserRegister(APIView):
     def get(self, request, *args, **kwargs):
         serializer = UserRegistrationSerializer()
         if request.user.is_authenticated:
-            url = reverse('User')
+            url = reverse('User', kwargs={'id': request.user.id})
             return redirect(url)
         return Response(serializer.data)
 
