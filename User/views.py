@@ -20,6 +20,7 @@ class UserList(generics.RetrieveAPIView):
 class UserRegister(APIView):
     permission_classes = [AllowAny]
 
+    # todo: remove in final version
     def get(self, request, *args, **kwargs):
         serializer = UserRegistrationSerializer()
         if request.user.is_authenticated:
@@ -42,6 +43,7 @@ class UserRegister(APIView):
 class UserLogin(APIView):
     permission_classes = [AllowAny]
 
+    # todo: remove in final version
     def get(self, request, *args, **kwargs):
         serializer = UserLoginSerializer()
         if request.user.is_authenticated:
