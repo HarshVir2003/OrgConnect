@@ -71,3 +71,9 @@ def logout_user(request):
     logout(request)
     # temp redirect to login
     return redirect(reverse('login'))
+
+
+def profile_view(request):
+    if request.user.is_authenticated:
+        return redirect(reverse('User', kwargs={'id': request.user.id}))
+    return redirect(reverse('User', kwargs={'id': 1}))
