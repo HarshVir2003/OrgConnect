@@ -34,7 +34,6 @@ class UserRegister(APIView):
             serializer.save()
             user = authenticate(username=request.data['username'], password=request.data['password'])
             login(request, user)
-            # temp redirect to profile
             url = reverse('User', kwargs={'id': request.user.id})
             return redirect(url)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

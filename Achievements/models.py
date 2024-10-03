@@ -10,7 +10,7 @@ class Achievements(models.Model):
         two = 2, 'Contacts'
 
     id = models.AutoField(User, primary_key=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)  # User Object is The Foreign key not The user id
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=2000)
     achieved_at = models.DateField()
     Privacy_level = models.IntegerField(
