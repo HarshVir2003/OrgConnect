@@ -24,6 +24,7 @@ class Achievements(generics.ListCreateAPIView):
         serializer = self.get_serializer(data, many=True)
         return Response(serializer.data)
 
+
 # todo : application of data updation
 class AchievementsPost(APIView):
     serializer_class = AchievementsSerializer
