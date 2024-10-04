@@ -16,7 +16,7 @@ class UserAuthTests(APITestCase):
         self.login_url = reverse('login')
         self.logout_url = reverse('logout')
 
-    def test_user_registration(self):
+    def test_user_registration_valid(self):
         data = {
             'username': 'newuser',
             'password': 'newpassword',
@@ -29,13 +29,34 @@ class UserAuthTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_302_FOUND)
         self.assertTrue(User.objects.filter(username='newuser').exists())
 
-    def test_user_login(self):
+    def test_user_registration_invalid(self):
+        data = {
+            'username': 'newuser',
+            'password': 'newpassword',
+            'email': 'newuser@example.com',
+            'first_name': 'New',
+            'last_name': 'User',
+            'password_confirm': 'notnewpassword'
+        }
+        response = self.client.post(self.register_url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(User.objects.filter(username='newuser').exists())
+
+    def test_user_login_valid(self):
         data = {
             'username': 'testuser',
             'password': 'testpassword'
         }
         response = self.client.post(self.login_url, data)
         self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+
+    def test_user_login_invalid(self):
+        data = {
+            'username': 'testuser',
+            'password': 'password'
+        }
+        response = self.client.post(self.login_url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_logout(self):
         self.client.login(username='testuser', password='testpassword')
