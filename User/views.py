@@ -79,4 +79,4 @@ def logout_user(request):
 def profile_view(request):
     if request.user.is_authenticated:
         return redirect(reverse('User', kwargs={'id': request.user.id}))
-    return redirect(reverse('User', kwargs={'id': 1}))
+    return Response({"message": "Not Authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
