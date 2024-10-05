@@ -120,3 +120,57 @@ class AchievementTests(APITestCase):
         url = reverse('getAchievement', kwargs={"id": 10000})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_put_achievement_authorized(self):
+        self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
+        response = self.client.put(self.post_url, {'Privacy_level': 2, 'id': 2})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['message'], "Achievement updated")
+        self.assertEqual(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, 2)
+
+    def test_put_achievement_unauthorized(self):
+        response = self.client.put(self.post_url, {'Privacy_level': 2, 'id': 2})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.json()['message'], "No User Found")
+        self.assertEqual(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, 1)
+
+    def test_put_achievements_change_other_fields(self):
+        self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
+        response = self.client.put(self.post_url, {'id': 2, 'Privacy_level': 2, 'title': 'hoola boola hoo'})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertNotEquals(response.json()['message'], 'Achievement updated')
+        self.assertNotEquals(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, 2)
+        self.assertNotEquals(Achievements.objects.get(user_id=self.test_user_1, id=2).title, 'hoola boola hoo')
+
+    def test_put_achievements_change_other_fields_unauthorized(self):
+        response = self.client.put(self.post_url, {'id': 2, 'Privacy_level': 2, 'title': 'hoola boola hoo'})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_put_achievements_privacy_level_invalid_positive(self):
+        self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
+        response = self.client.put(self.post_url, {'Privacy_level': 200, 'id': 2})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotEquals(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, 200)
+
+    def test_put_achievements_privacy_level_invalid_negative(self):
+        self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
+        response = self.client.put(self.post_url, {'Privacy_level': -200, 'id': 2})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotEquals(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, -200)
+
+    def test_put_achievements_privacy_level_none(self):
+        self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
+        response = self.client.put(self.post_url, {'Privacy_level': None, 'id': 2})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotEquals(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, None)
+
+    def test_put_achievements_privacy_level_empty_string(self):
+        self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
+        response = self.client.put(self.post_url, {'Privacy_level': '', 'id': 2})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotEquals(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, '')
+
+    def test_put_achievements_not_exist(self):
+        self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
+        response = self.client.put(self.post_url, {'Privacy_level': 2, 'id': 200})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
