@@ -1,3 +1,5 @@
+import django.contrib.auth.models
+
 from Achievements.Serializer import AchievementsSerializer
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
@@ -12,7 +14,6 @@ class AchievementsGet(generics.ListCreateAPIView):
     serializer_class = AchievementsSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ['get']
-    lookup_field = 'id'
 
     def get_queryset(self):
         user_id = self.kwargs.get('id')
@@ -22,9 +23,12 @@ class AchievementsGet(generics.ListCreateAPIView):
         return data.get_data()
 
     def get(self, request, *args, **kwargs):
-        data = self.get_queryset()
-        serializer = self.get_serializer(data, many=True)
-        return Response(serializer.data)
+        try:
+            data = self.get_queryset()
+            serializer = self.get_serializer(data, many=True)
+            return Response(serializer.data)
+        except django.contrib.auth.models.User.DoesNotExist:
+            return Response({'message': "User doesn't exists."}, status=status.HTTP_404_NOT_FOUND)
 
 
 # todo : application of data updation
@@ -37,8 +41,11 @@ class AchievementsPost(APIView):
             data=request.data)
         if serializer.is_valid():
             if Achievements.objects.filter(title=request.data['title'], achieved_at=request.data['achieved_at'],
-                                        Privacy_level=request.data['Privacy_level'], user_id=request.user).exists():
+                                           Privacy_level=request.data['Privacy_level'], user_id=request.user).exists():
                 return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
             serializer.save(user_id=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
+
+    def put(self, request):
+        ...
