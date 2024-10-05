@@ -114,3 +114,9 @@ class AchievementTests(APITestCase):
         response = self.client.post(self.post_url, {'title': 'testAchivement', 'achieved_at': datetime.date.today(),
                                                     'Privacy_level': Achievements.PrivacyLevel.zero})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_unknown_user_achievement(self):
+        self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
+        url = reverse('getAchievement', kwargs={"id": 10000})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

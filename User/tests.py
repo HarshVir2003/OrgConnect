@@ -89,3 +89,9 @@ class UserAuthTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response2.status_code, status.HTTP_302_FOUND)
         self.assertTrue(User.objects.filter(username='newuser').exists())
+
+    def test_get_unknown_user(self):
+        self.client.post(self.login_url, {"username": "testuser", 'password': 'testpassword'})
+        url = reverse('User', kwargs={"id": 1000})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
