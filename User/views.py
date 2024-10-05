@@ -31,11 +31,15 @@ class UserRegister(APIView):
     def post(self, request, *args, **kwargs):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            user = authenticate(username=request.data['username'], password=request.data['password'])
-            login(request, user)
-            url = reverse('User', kwargs={'id': request.user.id})
-            return redirect(url)
+            User_object = User.objects.filter(username=request.data['username']).exists()
+            if not User_object:
+                serializer.save()
+                user = authenticate(username=request.data['username'], password=request.data['password'])
+                login(request, user)
+                url = reverse('User', kwargs={'id': request.user.id})
+                return redirect(url)
+            else:
+                return Response({"message": "Already Registered."}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

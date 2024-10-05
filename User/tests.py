@@ -74,3 +74,18 @@ class UserAuthTests(APITestCase):
     def test_get_user_profile_unauthenticated(self):
         response = self.client.get(self.user_list_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_register_twice(self):
+        data = {
+            'username': 'newuser',
+            'password': 'newpassword',
+            'email': 'newuser@example.com',
+            'first_name': 'New',
+            'last_name': 'User',
+            'password_confirm': 'newpassword'
+        }
+        response2 = self.client.post(self.register_url, data)
+        response = self.client.post(self.register_url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response2.status_code, status.HTTP_302_FOUND)
+        self.assertTrue(User.objects.filter(username='newuser').exists())
