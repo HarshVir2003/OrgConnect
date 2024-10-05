@@ -10,8 +10,8 @@ class DataBuilder:
         self.target_user = target_user
 
     def get_data(self):
-        is_friend = Contacts.objects.filter(user=self.request_user,
-                                            friend=self.target_user).exists()
+        is_friend = Contacts.objects.filter(user=self.target_user,
+                                            friend=self.request_user).exists()
         if self.target_user == self.request_user:
             return Achievements.objects.filter(user_id=self.target_user)
         if is_friend:
