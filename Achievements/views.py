@@ -36,6 +36,10 @@ class AchievementsPost(APIView):
     serializer_class = AchievementsSerializer
     permission_classes = [IsAuthenticated]
 
+    # todo:remove it later
+    def get(self, request):
+        return Response({'id': Achievements.objects.filter(user_id=request.user)[0].id})
+
     def post(self, request):
         serializer = AchievementsSerializer(
             data=request.data)
@@ -47,5 +51,26 @@ class AchievementsPost(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
+    # todo: requires a token id not in url but in request
     def put(self, request):
-        ...
+        try:
+            achievement = Achievements.objects.get(user_id=request.user, id=request.data['id'])
+        except Achievements.DoesNotExist:
+            return Response({'message': 'Achievement does not exists'}, status=status.HTTP_404_NOT_FOUND)
+
+        privacy_level = request.data['Privacy_level']
+        if privacy_level is not None:
+            achievement.Privacy_level = privacy_level
+            achievement.save()
+            return Response({'message': 'Achievement updated'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': "privacy level is None"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # def delete(self, request):
+    #     try:
+    #         achievement = Achievements.objects.get(user_id=request.user, id=request.data['id'])
+    #     except Achievements.DoesNotExist:
+    #         return Response({'message': 'Achievement doesnot exist'}, status=status.HTTP_404_NOT_FOUND)
+    #
+    #     achievement.delete()
+    #     return Response({'message': 'Achievement deleted successfully'}, status=status.HTTP_200_OK)
