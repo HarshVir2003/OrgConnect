@@ -86,9 +86,7 @@ class AchievementTests(APITestCase):
     def test_get_achievements_unauthorized_gets_user_1(self):
         get_url = reverse('getAchievement', kwargs={'id': self.test_user_1.id})
         response = self.client.get(get_url)
-        json_data = response.json()
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(json_data), 1)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_achievements_user_1_gets_user_1(self):
         self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})

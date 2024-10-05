@@ -5,10 +5,12 @@ from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from Achievements.processing import DataBuilder
+from Achievements.models import Achievements
 
 
-class Achievements(generics.ListCreateAPIView):
+class AchievementsGet(generics.ListCreateAPIView):
     serializer_class = AchievementsSerializer
+    permission_classes = [IsAuthenticated]
     http_method_names = ['get']
     lookup_field = 'id'
 
@@ -31,8 +33,12 @@ class AchievementsPost(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = AchievementsSerializer(data=request.data)
+        serializer = AchievementsSerializer(
+            data=request.data)
         if serializer.is_valid():
+            if Achievements.objects.filter(title=request.data['title'], achieved_at=request.data['achieved_at'],
+                                        Privacy_level=request.data['Privacy_level'], user_id=request.user).exists():
+                return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
             serializer.save(user_id=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)

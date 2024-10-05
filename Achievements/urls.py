@@ -1,7 +1,7 @@
 from django.urls import path
-from Achievements.views import Achievements, AchievementsPost
+from Achievements.views import AchievementsGet, AchievementsPost
 
 urlpatterns = [
-    path('<int:id>/', Achievements.as_view(), name='getAchievement'),
+    path('<int:id>/', AchievementsGet.as_view(), name='getAchievement'),
     path('post/', AchievementsPost.as_view(), name='postAchievement')
 ]

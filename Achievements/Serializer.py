@@ -6,3 +6,4 @@ class AchievementsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Achievements
         fields = ['title', 'achieved_at', 'Privacy_level']
+
