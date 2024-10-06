@@ -174,3 +174,9 @@ class AchievementTests(APITestCase):
         self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
         response = self.client.put(self.post_url, {'Privacy_level': 2, 'id': 200})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_achivement(self):
+        self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
+        response = self.client.delete(self.post_url, {'id': 2})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(Achievements.objects.filter(id=2, user_id=self.test_user_1).exists())

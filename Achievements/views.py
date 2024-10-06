@@ -66,11 +66,11 @@ class AchievementsPost(APIView):
         else:
             return Response({'message': "privacy level is None"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # def delete(self, request):
-    #     try:
-    #         achievement = Achievements.objects.get(user_id=request.user, id=request.data['id'])
-    #     except Achievements.DoesNotExist:
-    #         return Response({'message': 'Achievement doesnot exist'}, status=status.HTTP_404_NOT_FOUND)
-    #
-    #     achievement.delete()
-    #     return Response({'message': 'Achievement deleted successfully'}, status=status.HTTP_200_OK)
+    def delete(self, request):
+        try:
+            achievement = Achievements.objects.get(user_id=request.user, id=request.data['id'])
+        except Achievements.DoesNotExist:
+            return Response({'message': 'Achievement doesnot exist'}, status=status.HTTP_404_NOT_FOUND)
+
+        achievement.delete()
+        return Response({'message': 'Achievement deleted successfully'}, status=status.HTTP_200_OK)
