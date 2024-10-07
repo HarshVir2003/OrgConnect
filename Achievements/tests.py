@@ -128,11 +128,9 @@ class AchievementTests(APITestCase):
         self.assertEqual(response.json()['message'], "Achievement updated")
         self.assertEqual(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, 2)
 
-    # todo: permission class isauthorised handled bu the view itself status 403 automatic and no message
     def test_put_achievement_unauthorized(self):
         response = self.client.put(self.post_url, {'Privacy_level': 2, 'id': 2})
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.json()['message'], "No User Found")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, 1)
 
     def test_put_achievements_change_other_fields(self):
@@ -158,13 +156,6 @@ class AchievementTests(APITestCase):
         response = self.client.put(self.post_url, {'Privacy_level': -200, 'id': 2})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertNotEqual(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, -200)
-
-    # todo: None type data cannot be encoded, None is not allowed for privacy_level, so i am not receiving data at back.
-    def test_put_achievements_privacy_level_none(self):
-        self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
-        response = self.client.put(self.post_url, {'Privacy_level': None, 'id': 2})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertNotEquals(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, None)
 
     def test_put_achievements_privacy_level_empty_string(self):
         self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
