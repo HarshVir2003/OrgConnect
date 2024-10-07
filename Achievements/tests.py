@@ -128,6 +128,7 @@ class AchievementTests(APITestCase):
         self.assertEqual(response.json()['message'], "Achievement updated")
         self.assertEqual(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, 2)
 
+    # todo: permission class isauthorised handled bu the view itself status 403 automatic and no message
     def test_put_achievement_unauthorized(self):
         response = self.client.put(self.post_url, {'Privacy_level': 2, 'id': 2})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -138,9 +139,9 @@ class AchievementTests(APITestCase):
         self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
         response = self.client.put(self.post_url, {'id': 2, 'Privacy_level': 2, 'title': 'hoola boola hoo'})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertNotEquals(response.json()['message'], 'Achievement updated')
-        self.assertNotEquals(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, 2)
-        self.assertNotEquals(Achievements.objects.get(user_id=self.test_user_1, id=2).title, 'hoola boola hoo')
+        self.assertNotEqual(response.json()['message'], 'Achievement updated')
+        self.assertNotEqual(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, 2)
+        self.assertNotEqual(Achievements.objects.get(user_id=self.test_user_1, id=2).title, 'hoola boola hoo')
 
     def test_put_achievements_change_other_fields_unauthorized(self):
         response = self.client.put(self.post_url, {'id': 2, 'Privacy_level': 2, 'title': 'hoola boola hoo'})
@@ -150,14 +151,15 @@ class AchievementTests(APITestCase):
         self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
         response = self.client.put(self.post_url, {'Privacy_level': 200, 'id': 2})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertNotEquals(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, 200)
+        self.assertNotEqual(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, 200)
 
     def test_put_achievements_privacy_level_invalid_negative(self):
         self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
         response = self.client.put(self.post_url, {'Privacy_level': -200, 'id': 2})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertNotEquals(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, -200)
+        self.assertNotEqual(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, -200)
 
+    # todo: None type data cannot be encoded, None is not allowed for privacy_level, so i am not receiving data at back.
     def test_put_achievements_privacy_level_none(self):
         self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
         response = self.client.put(self.post_url, {'Privacy_level': None, 'id': 2})
@@ -168,7 +170,7 @@ class AchievementTests(APITestCase):
         self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
         response = self.client.put(self.post_url, {'Privacy_level': '', 'id': 2})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertNotEquals(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, '')
+        self.assertNotEqual(Achievements.objects.get(user_id=self.test_user_1, id=2).Privacy_level, '')
 
     def test_put_achievements_not_exist(self):
         self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
