@@ -19,4 +19,4 @@ class PortfolioModel(models.Model):
         db_table = 'user_portfolio'
 
     def __str__(self):
-        return f'User - {self.id}'
+        return f'{self.user_id.name} - {self.id}'

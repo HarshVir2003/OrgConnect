@@ -1,6 +1,6 @@
-from django.urls import path
-
-
-urlpatterns = [
-    path('<int: id>')
-]
+# from django.urls import path
+#
+#
+# urlpatterns = [
+#     path('<int: id>')
+# ]
