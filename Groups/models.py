@@ -18,6 +18,7 @@ class Contacts(models.Model):
 class Community(models.Model):
     name = models.CharField(max_length=1024, blank=False)
     description = models.CharField(max_length=2048, null=True)
+    profile_img = models.URLField(null=False)
 
     def __str__(self):
         return f'{self.name}'
