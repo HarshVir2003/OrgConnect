@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 class Contacts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
     friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friend')
+    chat_url = models.URLField(null=False)
 
     class Meta:
         unique_together = (('user', 'friend'),)
@@ -26,7 +27,11 @@ class Group(models.Model):
     name = models.CharField(max_length=1024, blank=False)
     profile_img = models.URLField()
     members = models.ManyToManyField(User)
+    chat_url = models.URLField(null=False)
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
+
+    def get_members(self):
+        return [x for x in self.members.all()]
 
     def __str__(self):
         return f'{self.name} - {self.community.name}'
