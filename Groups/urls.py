@@ -1,5 +1,6 @@
 from django.urls import path
-from Groups.views import vv
+from Groups.views import GroupsView
 
 urlpatterns = [
-    path('', vv, name='jobUpdates')]
+    path('', GroupsView.as_view(), name='getGroups')
+]
