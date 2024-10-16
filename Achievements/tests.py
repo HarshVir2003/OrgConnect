@@ -183,5 +183,5 @@ class AchievementTests(APITestCase):
         self.client.post(self.login_url, {'username': 'testuser1', 'password': 'testpassword'})
         response = self.client.delete(self.post_url, {'id': 4})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertTrue(Achievements.objects.filter(id=4, user_id=self.test_user_1).exists())
+        self.assertTrue(Achievements.objects.filter(id=4, user_id=self.test_user_2).exists())
 
