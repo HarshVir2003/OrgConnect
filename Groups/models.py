@@ -16,8 +16,6 @@ class Contacts(models.Model):
         return f'{self.user} - {self.friend}'
 
 
-
-
 class Community(models.Model):
     name = models.CharField(max_length=1024, blank=False)
     description = models.CharField(max_length=2048, null=True)
