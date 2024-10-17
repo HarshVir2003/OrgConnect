@@ -17,4 +17,4 @@ class ContactsSerializer(ModelSerializer):
 class CommunitySerializer(ModelSerializer):
     class Meta:
         model = Community
-        fields = ['name', 'description', 'profile_img']
+        fields = ['name', 'description', 'profile_img', 'admins']

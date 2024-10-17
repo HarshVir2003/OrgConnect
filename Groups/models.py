@@ -1,24 +1,28 @@
 from django.db import models
 from django.contrib.auth.models import User
+from urllib.parse import quote
 
 
 # Create your models here.
 class Contacts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
     friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friend')
-    chat_url = models.URLField(null=False)
+    chat_url = models.URLField(null=True, blank=True)
 
-    class Meta:
-        unique_together = (('user', 'friend'),)
+    # class Meta:
+    #     unique_together = (('user', 'friend'),)
 
     def __str__(self):
         return f'{self.user} - {self.friend}'
+
+
 
 
 class Community(models.Model):
     name = models.CharField(max_length=1024, blank=False)
     description = models.CharField(max_length=2048, null=True)
     profile_img = models.URLField(null=False)
+    admins = models.ManyToManyField(User)
 
     def __str__(self):
         return f'{self.name}'
