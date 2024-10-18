@@ -130,6 +130,10 @@ class ContactsAPITest(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_get_contacts_no_added_contacts(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     def test_create_contact(self):
         data = {'user': self.user1.id, 'friend': self.user2.id}
         response = self.client.post(self.url, data)
