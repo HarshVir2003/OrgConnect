@@ -1,3 +1,4 @@
+import datetime
 from django.test import TestCase
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
@@ -16,7 +17,7 @@ class PortfolioViewTestCase(TestCase):
             "bio": "This is a test bio",
             "location": "Test City",
             "website": "https://example.com",
-            "birth_date": "1990-01-01",
+            "birth_date": datetime.date.today(),
             "linkedin_url": "https://linkedin.com/testuser",
             "github_url": "https://github.com/testuser",
             "kaggle_url": "https://kaggle.com/testuser",
