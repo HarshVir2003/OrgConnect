@@ -8,7 +8,6 @@ from .models import PortfolioModel
 
 
 class PortfolioViewTestCase(TestCase):
-
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', password='testpass')
         self.client = APIClient()
@@ -61,4 +60,3 @@ class PortfolioViewTestCase(TestCase):
         response = self.client.put(reverse('portfolio-detail', kwargs={'id': another_portfolio.id}),
                                    self.portfolio_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
