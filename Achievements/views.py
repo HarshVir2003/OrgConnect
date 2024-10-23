@@ -41,8 +41,7 @@ class AchievementsPost(APIView):
         return Response({'id': Achievements.objects.filter(user_id=request.user)[0].id})
 
     def post(self, request):
-        serializer = AchievementsSerializer(
-            data=request.data)
+        serializer = AchievementsSerializer(data=request.data)
         if serializer.is_valid():
             if Achievements.objects.filter(title=request.data['title'], achieved_at=request.data['achieved_at'],
                                            Privacy_level=request.data['Privacy_level'], user_id=request.user).exists():

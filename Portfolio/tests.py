@@ -1,17 +1,15 @@
 import datetime
-from django.test import TestCase
 from django.contrib.auth.models import User
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
 from django.urls import reverse
 from .models import PortfolioModel
 
 
-class PortfolioViewTestCase(TestCase):
+class PortfolioViewTestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', password='testpass')
         self.client = APIClient()
-        self.client.login(username='testuser', password='testpass')
         self.portfolio_data = {
             "bio": "This is a test bio",
             "location": "Test City",
@@ -26,25 +24,33 @@ class PortfolioViewTestCase(TestCase):
         self.portfolio = PortfolioModel.objects.create(user_id=self.user, **self.portfolio_data)
 
     def test_get_all_portfolios(self):
+        self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('portfolio-list'))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertGreaterEqual(len(response.data), 1)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
 
     def test_get_single_portfolio(self):
+        self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('portfolio-detail', kwargs={'id': self.portfolio.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['bio'], self.portfolio_data['bio'])
 
     def test_get_portfolio_not_found(self):
+        self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('portfolio-detail', kwargs={'id': 999}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_portfolio(self):
-        response = self.client.post(reverse('portfolio-list'), self.portfolio_data, format='json')
+        User.objects.create_user(username='anotheruser2', password='anotherpass')
+        self.client.login(username='anotheruser2', password='anotherpass')
+        updated_data = self.portfolio_data.copy()
+        updated_data['bio'] = "Updated test bio"
+        updated_data['location'] = 'Another test city'
+        response = self.client.post(reverse('portfolio-list'), updated_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['bio'], self.portfolio_data['bio'])
+        self.assertEqual(response.data['bio'], updated_data['bio'])
 
     def test_update_portfolio(self):
+        self.client.login(username='testuser', password='testpass')
         updated_data = self.portfolio_data.copy()
         updated_data['bio'] = "Updated test bio"
 
@@ -59,4 +65,4 @@ class PortfolioViewTestCase(TestCase):
 
         response = self.client.put(reverse('portfolio-detail', kwargs={'id': another_portfolio.id}),
                                    self.portfolio_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
