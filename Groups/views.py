@@ -29,6 +29,7 @@ class GroupsView(ListCreateAPIView):
                 return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print('data not valid gp')
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
 
@@ -53,6 +54,7 @@ class CommunityView(ListCreateAPIView):
                 return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print('data not valid')
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
 

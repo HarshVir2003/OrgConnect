@@ -44,7 +44,7 @@ class GroupModelTest(TestCase):
         self.user2 = User.objects.create_user(username='user2', password='password123')
         self.community = Community.objects.create(
             name='Community 1',
-            profile_img='http://example.com/img.jpg'
+            profile_img='http://example.com/img.jpg',
         )
         self.group = Group.objects.create(
             name='Test Group',
@@ -88,7 +88,9 @@ class GroupsAPITest(APITestCase):
         data = {
             'name': 'New Group',
             'profile_img': 'http://example.com/new_img.jpg',
-            'community': self.community.id,
+            'members': [1],
+            'chat_url': 'http://example.com/new_img.jpg',
+            'community': self.community.id
         }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -112,6 +114,7 @@ class CommunityAPITest(APITestCase):
             'name': 'New Community',
             'description': 'A new community description',
             'profile_img': 'http://example.com/new_img.jpg',
+            'admins': [1]
         }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
