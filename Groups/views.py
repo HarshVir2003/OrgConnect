@@ -9,6 +9,10 @@ from urllib.parse import quote
 
 
 # Create your views here.
+# todo: create a view for getting group members and write tests for it
+class MembersView(ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+
 
 class GroupsView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -29,7 +33,6 @@ class GroupsView(ListCreateAPIView):
                 return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print('data not valid gp')
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
 

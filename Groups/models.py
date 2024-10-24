@@ -9,9 +9,6 @@ class Contacts(models.Model):
     friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friend')
     chat_url = models.URLField(null=True, blank=True)
 
-    # class Meta:
-    #     unique_together = (('user', 'friend'),)
-
     def __str__(self):
         return f'{self.user} - {self.friend}'
 
