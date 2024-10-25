@@ -42,3 +42,13 @@ class PortfolioView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id=None):
+        try:
+            PortfolioModel.objects.get(id=id, user_id=request.user)
+        except PortfolioModel.DoesNotExist:
+            return Response({"error": "Portfolio not found or unauthorized."}, status=status.HTTP_404_NOT_FOUND)
+
+        PortfolioModel.objects.filter(id=id, user_id=request.user).delete()
+        return Response({'message': f'Portfolio for user {request.user.username} deleted.'},
+                        status=status.HTTP_204_NO_CONTENT)

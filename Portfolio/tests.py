@@ -69,5 +69,5 @@ class PortfolioViewTestCase(APITestCase):
 
     def test_delete_portfolio(self):
         self.client.login(username='testuser', password='testpass')
-        response = self.client.delete(reverse("portfolio-detail"), kwargs={'id': self.portfolio.id})
+        response = self.client.delete(reverse("portfolio-detail", kwargs={'id': self.portfolio.id}))
         self.assertTrue(response.status_code == status.HTTP_200_OK or response.status_code == status.HTTP_204_NO_CONTENT)
