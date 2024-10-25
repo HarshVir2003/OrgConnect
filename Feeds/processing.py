@@ -4,4 +4,20 @@ from Groups.models import Contacts
 
 
 class DataBuilder:
-    ...
+    def __init__(self, request_user, target_user):
+        self.request_user = request_user
+        self.target_user = target_user
+
+    def get_data(self):
+        is_friend = Contacts.objects.filter(user=self.target_user,
+                                            friend=self.request_user).exists()
+        if self.target_user == self.request_user:
+            return Posts.objects.filter(user_id=self.target_user)
+        if is_friend:
+            return Posts.objects.filter(user_id=self.target_user).filter(
+                Q(Privacy_level=Posts.PrivacyLevel.zero) |
+                Q(Privacy_level=Posts.PrivacyLevel.two))
+        return Posts.objects.filter(
+            user_id=self.target_user,
+            Privacy_level=Posts.PrivacyLevel.zero
+        )

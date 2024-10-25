@@ -1,6 +1,9 @@
 from django.shortcuts import render, HttpResponse
+from rest_framework.views import APIView
+from django.contrib.auth.models import User
+
 from Groups.models import Community, Group, Contacts
-from Groups.serializer import GroupSerializer, ContactsSerializer, CommunitySerializer
+from Groups.serializer import GroupSerializer, ContactsSerializer, CommunitySerializer, MemberSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
@@ -10,8 +13,72 @@ from urllib.parse import quote
 
 # Create your views here.
 # todo: create a view for getting group members and write tests for it
-class MembersView(ListCreateAPIView):
+class MembersView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = MemberSerializer
+
+    def get(self, request, id: int | None = None) -> Response:
+        try:
+            group = Group.objects.get(id=id)
+            community = Community.objects.get(id=group.community.id)
+            if not community.admins.filter(id=request.user.id).exists():
+                return Response({'message': 'not Authorised'}, status=status.HTTP_403_FORBIDDEN)
+
+            members = group.members.all()
+            serializer = self.serializer_class(members, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request, id: int | None = None) -> Response:
+        try:
+            group = Group.objects.get(id=id)
+            community = Community.objects.get(id=group.community.id)
+            if not community.admins.filter(id=request.user.id).exists():
+                return Response({'message': 'not Authorised'}, status=status.HTTP_403_FORBIDDEN)
+            username = request.data.get('username')
+            if username:
+                try:
+                    user = User.objects.get(username=username)
+                except User.DoesNotExist:
+                    return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                return Response({'message': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+            if user not in group.members.all():
+                group.members.add(user)
+                return Response({'message': f'{user.username} added to the group'}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'message': 'User is already a member of this group'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, id: int | None = None) -> Response:
+        try:
+            group = Group.objects.get(id=id)
+            community = Community.objects.get(id=group.community.id)
+            if not community.admins.filter(id=request.user.id).exists():
+                return Response({'message': 'Not authorized'}, status=status.HTTP_403_FORBIDDEN)
+
+            username = request.data.get('username')
+            if username:
+                try:
+                    user = User.objects.get(username=username)
+                except User.DoesNotExist:
+                    return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                return Response({'message': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+            if user in group.members.all():
+                group.members.remove(user)
+                return Response({'message': f'{user.username} removed from the group'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'User is not a member of this group'}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class GroupsView(ListCreateAPIView):
