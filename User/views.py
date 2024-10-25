@@ -32,14 +32,17 @@ class UserRegister(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             User_object = User.objects.filter(username=request.data['username']).exists()
-            if not User_object:
-                serializer.save()
-                user = authenticate(username=request.data['username'], password=request.data['password'])
-                login(request, user)
-                url = reverse('User', kwargs={'id': request.user.id})
-                return redirect(url)
+            if request.data['username']:
+                if not User_object:
+                    serializer.save()
+                    user = authenticate(username=request.data['username'], password=request.data['password'])
+                    login(request, user)
+                    url = reverse('User', kwargs={'id': request.user.id})
+                    return redirect(url)
+                else:
+                    return Response({"message": "Already Registered."}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({"message": "Already Registered."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message': 'Provide a valid Username.'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
