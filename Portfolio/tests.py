@@ -23,7 +23,7 @@ class PortfolioViewTestCase(APITestCase):
 
         self.portfolio = PortfolioModel.objects.create(user_id=self.user, **self.portfolio_data)
 
-    def test_get_all_portfolios(self):
+    def test_get_portfolios_no_id(self):
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('portfolio-list'))
         self.assertEqual(response.status_code, status.HTTP_302_FOUND)
@@ -66,3 +66,8 @@ class PortfolioViewTestCase(APITestCase):
         response = self.client.put(reverse('portfolio-detail', kwargs={'id': another_portfolio.id}),
                                    self.portfolio_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_portfolio(self):
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.delete(reverse("portfolio-detail"), kwargs={'id': self.portfolio.id})
+        self.assertTrue(response.status_code == status.HTTP_200_OK or response.status_code == status.HTTP_204_NO_CONTENT)
