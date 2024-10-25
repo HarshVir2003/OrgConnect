@@ -163,3 +163,45 @@ class MembersAPITest(APITestCase):
         self.client.post(reverse('login'), {'username': 'user2', 'password': 'password123'})
         response = self.client.get(reverse('getMembers', kwargs={'id': self.group.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_members_group_not_exist(self):
+        self.client.post(reverse('login'), {'username': 'user2', 'password': 'password123'})
+        response = self.client.get(reverse('getMembers', kwargs={'id': 9999}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_no_id(self):
+        self.client.post(reverse('login'), {'username': 'user1', 'password': 'password123'})
+        response = self.client.get(reverse('getMembers'))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_post_members(self):
+        self.client.post(reverse('login'), {'username': 'user1', 'password': 'password123'})
+        User.objects.create(username='abc', password='testPass')
+        response = self.client.post(reverse('getMembers', kwargs={'id': self.group.id}),
+                                    {'username': 'abc'})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(self.group.members.filter(username='abc').exists())
+
+    def test_post_memeber_already_exist(self):
+        self.client.post(reverse('login'), {'username': 'user1', 'password': 'password123'})
+        User.objects.create(username='abc', password='testPass')
+        self.client.post(reverse('getMembers', kwargs={'id': self.group.id}),
+                         {'username': 'abc'})
+        response = self.client.post(reverse('getMembers', kwargs={'id': self.group.id}),
+                                    {'username': 'abc'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_post_members_not_exist(self):
+        self.client.post(reverse('login'), {'username': 'user1', 'password': 'password123'})
+        response = self.client.post(reverse('getMembers', kwargs={'id': self.group.id}),
+                                    {'username': 'ab'})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertFalse(self.group.members.filter(username='ab').exists())
+
+    def test_post_not_admin(self):
+        self.client.post(reverse('login'), {'username': 'user2', 'password': 'password123'})
+        User.objects.create(username='abc', password='testPass')
+        response = self.client.post(reverse('getMembers', kwargs={'id': self.group.id}),
+                                    {'username': 'abc'})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertFalse(self.group.members.filter(username='abc').exists())
