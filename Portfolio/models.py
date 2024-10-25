@@ -13,6 +13,7 @@ class PortfolioModel(models.Model):
     github_url = models.URLField(null=True)
     kaggle_url = models.URLField(null=True)
     google_scholar_url = models.URLField(null=True)
+    image_url = models.URLField(max_length=2048, null=True)
 
     class Meta:
         verbose_name = 'Portfolio Model'
