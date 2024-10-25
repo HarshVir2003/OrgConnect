@@ -141,3 +141,23 @@ class ContactsAPITest(APITestCase):
         data = {'user': self.user1.id, 'friend': self.user2.id}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
+class MembersAPITest(APITestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(username='user1', password='password123')
+        self.user2 = User.objects.create_user(username='user2', password='password123')
+        self.client = APIClient()
+        self.community = Community.objects.create(name='test', description='test Description', admins=[self.user1])
+        self.group = Group.objects.create(name='testGroup', members=[self.user1, self.user2], chat_url='testUrl',
+                                          community=self.community)
+
+    def test_get_members(self):
+        self.client.post(reverse('login'), {'username': 'user1', 'password': 'password123'})
+        response = self.client.get(reverse('getMembers', kwargs={'id': self.group.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_members_not_by_admin(self):
+        self.client.post(reverse('login'), {'username': 'user2', 'password': 'password123'})
+        response = self.client.get(reverse('getMembers', kwargs={'id': self.group.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
