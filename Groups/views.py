@@ -18,6 +18,8 @@ class MembersView(APIView):
     serializer_class = MemberSerializer
 
     def get(self, request, id: int | None = None) -> Response:
+        if id is None:
+            return Response({'message': 'No id provided!'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             group = Group.objects.get(id=id)
             community = Community.objects.get(id=group.community.id)

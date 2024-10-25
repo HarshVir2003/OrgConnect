@@ -28,7 +28,7 @@ class Group(models.Model):
     profile_img = models.URLField()
     members = models.ManyToManyField(User)
     chat_url = models.URLField(null=False)
-    community = models.ForeignKey(Community, on_delete=models.CASCADE)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, blank=False)
 
     def get_members(self):
         return [x for x in self.members.all()]
