@@ -148,9 +148,11 @@ class MembersAPITest(APITestCase):
         self.user1 = User.objects.create_user(username='user1', password='password123')
         self.user2 = User.objects.create_user(username='user2', password='password123')
         self.client = APIClient()
-        self.community = Community.objects.create(name='test', description='test Description', admins=[self.user1])
-        self.group = Group.objects.create(name='testGroup', members=[self.user1, self.user2], chat_url='testUrl',
-                                          community=self.community)
+        self.community = Community.objects.create(name='test', description='test Description')
+        self.community.admins.add(self.user1)
+        self.group = Group.objects.create(name='testGroup', chat_url='testUrl', community=self.community)
+        self.group.members.add(self.user1)
+        self.group.members.add(self.user2)
 
     def test_get_members(self):
         self.client.post(reverse('login'), {'username': 'user1', 'password': 'password123'})
