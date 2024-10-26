@@ -205,3 +205,18 @@ class MembersAPITest(APITestCase):
                                     {'username': 'abc'})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertFalse(self.group.members.filter(username='abc').exists())
+
+    def test_delete_user_admin(self):
+        self.client.post(reverse('login'), {'username': 'user1', 'password': 'password123'})
+        User.objects.create(username='abc', password='testPass')
+        self.client.post(reverse('getMembers', kwargs={'id': self.group.id}), {'username': 'abc'})
+        response = self.client.delete(reverse('getMembers', kwargs={'id': self.group.id}), {"username": 'abc'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_delete_user_no_data_sent(self):
+        self.client.post(reverse('login'), {'username': 'user1', 'password': 'password123'})
+        User.objects.create(username='abc', password='testPass')
+        self.client.post(reverse('getMembers', kwargs={'id': self.group.id}), {'username': 'abc'})
+        response = self.client.delete(reverse('getMembers', kwargs={'id': self.group.id}))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
