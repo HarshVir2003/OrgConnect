@@ -228,10 +228,12 @@ class MembersAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_unknown_user(self):
+        self.client.post(reverse('login'), {'username': 'user1', 'password': 'password123'})
         response = self.client.delete(reverse('getMembers', kwargs={'id': self.group.id}), {"username": 'abc'})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_user_not_in_group(self):
+        self.client.post(reverse('login'), {'username': 'user1', 'password': 'password123'})
         User.objects.create(username='abc', password='testPass')
         response = self.client.delete(reverse('getMembers', kwargs={'id': self.group.id}), {"username": 'abc'})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
