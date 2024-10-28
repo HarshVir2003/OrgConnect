@@ -12,10 +12,10 @@ from urllib.parse import quote
 
 
 # Create your views here.
-# todo: create a view for getting group members and write tests for it
 class MembersView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = MemberSerializer
+    http_method_names = ['get', 'post', 'delete']
 
     def get(self, request, id: int | None = None) -> Response:
         if id is None:

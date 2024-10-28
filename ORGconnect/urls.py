@@ -24,4 +24,5 @@ urlpatterns = [
     path('achievement/', include('Achievements.urls')),
     path('groups/', include('Groups.urls')),
     path('portfolio/', include('Portfolio.urls')),
+    path('feeds/', include('Feeds.urls'))
 ]

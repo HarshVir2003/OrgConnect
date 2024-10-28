@@ -36,10 +36,6 @@ class AchievementsPost(APIView):
     serializer_class = AchievementsSerializer
     permission_classes = [IsAuthenticated]
 
-    # todo: remove it later
-    def get(self, request):
-        return Response({'id': Achievements.objects.filter(user_id=request.user)[0].id})
-
     def post(self, request):
         serializer = AchievementsSerializer(data=request.data)
         if serializer.is_valid():
