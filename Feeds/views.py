@@ -37,12 +37,6 @@ class PostsPostingView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
-    # def put(self, request):
-    #     try:
-    #         post = Posts.objects.get(user_id=request.user, id=request.data['id'])
-    #     except Posts.DoesNotExist:
-    #         return Response({'message': 'Achievement does not exists'}, status=status.HTTP_404_NOT_FOUND)
-
     def delete(self, request):
         try:
             post = Posts.objects.get(user_id=request.user, id=request.data['id'])
@@ -102,6 +96,7 @@ class LikeView(APIView):
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
     def delete(self, request):
+        print(request.data['id'])
         try:
             like = Likes.objects.get(user_id=request.user, id=request.data['id'])
         except Likes.DoesNotExist:

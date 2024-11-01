@@ -14,8 +14,10 @@ class FeedsTestCase(TestCase):
         self.login_data = {'username': 'user1', 'password': 'password1'}
 
         # Create posts
-        self.post1 = Posts.objects.create(user_id=self.user1, content="First Post", image_url="http://example.com/1.jpg")
-        self.post2 = Posts.objects.create(user_id=self.user2, content="Second Post", image_url="http://example.com/2.jpg")
+        self.post1 = Posts.objects.create(user_id=self.user1, content="First Post",
+                                          image_url="http://example.com/1.jpg")
+        self.post2 = Posts.objects.create(user_id=self.user2, content="Second Post",
+                                          image_url="http://example.com/2.jpg")
 
         # Create comment
         self.comment = Comments.objects.create(user_id=self.user1, post_id=self.post1, content="Nice Post!")
@@ -100,14 +102,15 @@ class FeedsTestCase(TestCase):
     def test_unlike_post(self):
         """Test unliking a post."""
         self.authenticate()
-        response = self.client.delete(reverse('like-create'), data={'id': self.like.id})
+        response = self.client.delete(reverse('like-create'),
+                                      data={'id': self.like.id}, content_type='application/json')  # post id needed not like id ???
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Likes.objects.filter(id=self.like.id).exists())
 
     def test_unlike_non_existent_post(self):
         """Test unliking a non-existent post."""
         self.authenticate()
-        response = self.client.delete(reverse('like-create'), data={'id': 999})
+        response = self.client.delete(reverse('like-create'), data={'id': 999}, content_type='application/json')
         self.assertEqual(response.status_code, 404)
 
     def test_feed_without_authentication(self):
@@ -132,8 +135,10 @@ class FeedsAdditionalTestCase(TestCase):
         self.login_data = {'username': 'user1', 'password': 'password1'}
 
         # Create posts
-        self.post1 = Posts.objects.create(user_id=self.user1, content="First Post", image_url="http://example.com/1.jpg")
-        self.post2 = Posts.objects.create(user_id=self.user2, content="Second Post", image_url="http://example.com/2.jpg")
+        self.post1 = Posts.objects.create(user_id=self.user1, content="First Post",
+                                          image_url="http://example.com/1.jpg")
+        self.post2 = Posts.objects.create(user_id=self.user2, content="Second Post",
+                                          image_url="http://example.com/2.jpg")
 
         # Create comments
         self.comment1 = Comments.objects.create(user_id=self.user1, post_id=self.post1, content="Nice Post!")
@@ -174,7 +179,8 @@ class FeedsAdditionalTestCase(TestCase):
     def test_create_post_with_long_content(self):
         self.authenticate()
         long_content = 'A' * 10001  # 1 character over the limit
-        response = self.client.post(reverse('post-create'), data={'content': long_content, 'image_url': 'http://example.com/new.jpg'})
+        response = self.client.post(reverse('post-create'),
+                                    data={'content': long_content, 'image_url': 'http://example.com/new.jpg'})
         self.assertEqual(response.status_code, 403)
 
     # 4. Test creating a comment without a post reference
