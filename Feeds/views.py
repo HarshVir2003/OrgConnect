@@ -72,9 +72,9 @@ class CommentView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
-    def delete(self, request):
+    def delete(self, request, id=None):
         try:
-            comment = Comments.objects.get(user_id=request.user, id=request.data['id'])
+            comment = Comments.objects.get(user_id=request.user, id=id)
         except Comments.DoesNotExist:
             return Response({'message': 'comment doesnot exist'}, status=status.HTTP_404_NOT_FOUND)
 

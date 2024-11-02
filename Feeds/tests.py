@@ -238,7 +238,7 @@ class FeedsAdditionalTestCase(TestCase):
     # 12. Test deleting a post without providing ID
     def test_delete_post_without_id(self):
         self.authenticate()
-        response = self.client.delete(reverse('post-detail'), data={})
+        response = self.client.delete(reverse('post-create'), data={})
         self.assertEqual(response.status_code, 404)
 
     # 13. Test comment deletion by a non-owner
