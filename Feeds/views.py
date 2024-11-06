@@ -31,7 +31,7 @@ class PostsPostingView(APIView):
     http_method_names = ['post', 'put' 'delete']
 
     def post(self, request):
-        serializer = PostsSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -65,7 +65,7 @@ class CommentView(APIView):
             return Response({'message': 'No Comments'}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request):
-        serializer = CommentsSerializers(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -88,7 +88,7 @@ class LikeView(APIView):
     http_method_names = ['post', 'delete']
 
     def post(self, request):
-        serializer = LikesSerializers(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -96,7 +96,7 @@ class LikeView(APIView):
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
     def delete(self, request):
-        print(request.data['id'])
+        print('ji')
         try:
             like = Likes.objects.get(user_id=request.user, id=request.data['id'])
         except Likes.DoesNotExist:
