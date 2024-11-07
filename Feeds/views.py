@@ -31,7 +31,11 @@ class PostsPostingView(APIView):
     http_method_names = ['post', 'delete']
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
+        data = dict(request.data)
+        for x in data:
+            data[x] = data[x][0]
+        data['user_id'] = request.user.id
+        serializer = self.serializer_class(data=data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -70,12 +74,11 @@ class CommentView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
     def delete(self, request, id=None):
         if not id:
-            return Response({'message':'no comment'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': 'no comment'}, status=status.HTTP_404_NOT_FOUND)
         try:
             comment = Comments.objects.get(user_id=request.user, id=id)
         except Comments.DoesNotExist:
@@ -87,7 +90,7 @@ class CommentView(APIView):
 
 class LikeView(APIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = CommentsSerializers
+    serializer_class = LikesSerializers
     http_method_names = ['post', 'delete']
 
     def post(self, request):
@@ -95,7 +98,6 @@ class LikeView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
     def delete(self, request, id=None):
