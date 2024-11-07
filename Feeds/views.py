@@ -35,7 +35,6 @@ class PostsPostingView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print(request.data)
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
     def delete(self, request, id=None):
@@ -75,7 +74,7 @@ class CommentView(APIView):
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
     def delete(self, request, id=None):
-        if not id :
+        if not id:
             return Response({'message':'no comment'}, status=status.HTTP_404_NOT_FOUND)
         try:
             comment = Comments.objects.get(user_id=request.user, id=id)
