@@ -67,7 +67,7 @@ class FeedsTestCase(TestCase):
     def test_create_comment(self):
         """Test adding a comment to a post."""
         self.authenticate()
-        comment_data = {'post_id': self.post2.id, 'content': 'Great post!'}
+        comment_data = {'post_id': self.post2.id, 'content': 'Great post!', 'user_id': 0}
         response = self.client.post(reverse('comment-create'), data=comment_data)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['content'], 'Great post!')
@@ -82,7 +82,7 @@ class FeedsTestCase(TestCase):
     def test_delete_comment(self):
         """Test deleting a comment."""
         self.authenticate()
-        response = self.client.delete(reverse('comment-create'))
+        response = self.client.delete(reverse('comment-create'), args=[self.comment.id])
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Comments.objects.filter(id=self.comment.id).exists())
 
@@ -95,22 +95,21 @@ class FeedsTestCase(TestCase):
     def test_like_post(self):
         """Test liking a post."""
         self.authenticate()
-        like_data = {'post_id': self.post2.id}
+        like_data = {'post_id': self.post2.id, 'user_id': 0}
         response = self.client.post(reverse('like-create'), data=like_data)
         self.assertEqual(response.status_code, 201)
 
     def test_unlike_post(self):
         """Test unliking a post."""
         self.authenticate()
-        response = self.client.delete(reverse('like-create'),
-                                      data={'id': self.like.id}, content_type='application/json')  # post id needed not like id ???
+        response = self.client.delete(reverse('like-create'), args=[self.like.id])
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Likes.objects.filter(id=self.like.id).exists())
 
     def test_unlike_non_existent_post(self):
         """Test unliking a non-existent post."""
         self.authenticate()
-        response = self.client.delete(reverse('like-create'), data={'id': 999}, content_type='application/json')
+        response = self.client.delete(reverse('like-create'), args=[999])
         self.assertEqual(response.status_code, 404)
 
     def test_feed_without_authentication(self):
@@ -153,27 +152,31 @@ class FeedsAdditionalTestCase(TestCase):
         response = self.client.post(reverse('login'), data=self.login_data)
         self.assertEqual(response.status_code, 302)
 
-    # 1. Test updating a post (user should own the post)
-    def test_update_post(self):
-        self.authenticate()
-        response = self.client.put(
-            reverse('post-detail', args=[self.post1.id]),
-            data={'content': 'Updated Post', 'image_url': 'http://example.com/updated.jpg'},
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 200)
-        self.post1.refresh_from_db()
-        self.assertEqual(self.post1.content, 'Updated Post')
+    """
+    Post updating not part of first version words of His Holiness the team leader himself !!!.
+    """
 
-    # 2. Test updating another user's post (should fail)
-    def test_update_another_users_post(self):
-        self.authenticate()
-        response = self.client.put(
-            reverse('post-detail', args=[self.post2.id]),
-            data={'content': 'Unauthorized Update', 'image_url': 'http://example.com/unauth.jpg'},
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 403)
+    # 1. Test updating a post (user should own the post)
+    # def test_update_post(self):
+    #     self.authenticate()
+    #     response = self.client.put(
+    #         reverse('post-detail', args=[self.post1.id]),
+    #         data={'content': 'Updated Post', 'image_url': 'http://example.com/updated.jpg'},
+    #         content_type='application/json'
+    #     )
+    #     self.assertEqual(response.status_code, 200)
+    #     self.post1.refresh_from_db()
+    #     self.assertEqual(self.post1.content, 'Updated Post')
+    #
+    # # 2. Test updating another user's post (should fail)
+    # def test_update_another_users_post(self):
+    #     self.authenticate()
+    #     response = self.client.put(
+    #         reverse('post-detail', args=[self.post2.id]),
+    #         data={'content': 'Unauthorized Update', 'image_url': 'http://example.com/unauth.jpg'},
+    #         content_type='application/json'
+    #     )
+    #     self.assertEqual(response.status_code, 403)
 
     # 3. Test creating a post with long content (exceeding max_length)
     def test_create_post_with_long_content(self):
@@ -206,7 +209,7 @@ class FeedsAdditionalTestCase(TestCase):
     def test_unlike_without_id(self):
         self.authenticate()
         response = self.client.delete(reverse('like-create'), data={})
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
 
     # 8. Test retrieving feeds for a user with no posts
     def test_get_feeds_for_new_user_with_no_posts(self):
@@ -220,7 +223,7 @@ class FeedsAdditionalTestCase(TestCase):
     def test_delete_another_users_post(self):
         self.authenticate()
         response = self.client.delete(reverse('post-detail', args=[self.post2.id]))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 404)
 
     # 10. Test liking a non-existent post
     def test_like_non_existent_post(self):
@@ -239,7 +242,7 @@ class FeedsAdditionalTestCase(TestCase):
     # 12. Test deleting a post without providing ID
     def test_delete_post_without_id(self):
         self.authenticate()
-        response = self.client.delete(reverse('post-create'), data={})
+        response = self.client.delete(reverse('post-create'))
         self.assertEqual(response.status_code, 404)
 
     # 13. Test comment deletion by a non-owner
