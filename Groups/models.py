@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from urllib.parse import quote
+from Chat.linkbuiilder import ChatLinkMaker
 
 
 # Create your models here.
@@ -8,6 +9,11 @@ class Contacts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
     friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friend')
     chat_url = models.URLField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        link = ChatLinkMaker(self.user.username, self.friend.username)
+        link = link.make_link()
+        self.chat_url = link
 
     def __str__(self):
         return f'{self.user} - {self.friend}'
@@ -32,6 +38,11 @@ class Group(models.Model):
 
     def get_members(self):
         return [x for x in self.members.all()]
+
+    def save(self, *args, **kwargs):
+        link = ChatLinkMaker(self.name, self.community.name)
+        link = link.make_link()
+        self.chat_url = link
 
     def __str__(self):
         return f'{self.name} - {self.community.name}'
