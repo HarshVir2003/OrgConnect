@@ -19,7 +19,7 @@ class ContactsModelTest(TestCase):
         self.assertEqual(self.contact.friend, self.user2)
 
     def test_chat_url_initialization(self):
-        self.assertIsNone(self.contact.chat_url)
+        self.assertIsNotNone(self.contact.chat_url)
 
 
 class CommunityModelTest(TestCase):
