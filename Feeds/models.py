@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from MediaManagement.file_name import get_name_of_file
 
 
 # Create your models here.
@@ -13,7 +14,7 @@ class Posts(models.Model):
     id = models.AutoField(User, primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length=10000)
-    image_url = models.URLField()
+    image_url = models.ImageField(upload_to=get_name_of_file)
     created_at = models.DateTimeField(auto_now=True)
     Privacy_level = models.IntegerField(
         choices=PrivacyLevel.choices,

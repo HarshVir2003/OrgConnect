@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from urllib.parse import quote
 from Chat.linkbuiilder import ChatLinkMaker
+from MediaManagement.file_name import get_name_of_file
 
 
 # Create your models here.
@@ -22,7 +23,7 @@ class Contacts(models.Model):
 class Community(models.Model):
     name = models.CharField(max_length=1024, blank=False)
     description = models.CharField(max_length=2048, null=True)
-    profile_img = models.URLField(null=False)
+    profile_img = models.ImageField(upload_to=get_name_of_file)
     admins = models.ManyToManyField(User)
 
     def __str__(self):
@@ -31,7 +32,7 @@ class Community(models.Model):
 
 class Group(models.Model):
     name = models.CharField(max_length=1024, blank=False)
-    profile_img = models.URLField()
+    profile_img = models.ImageField(upload_to=get_name_of_file)
     members = models.ManyToManyField(User)
     chat_url = models.URLField(null=False)
     community = models.ForeignKey(Community, on_delete=models.CASCADE, blank=False)

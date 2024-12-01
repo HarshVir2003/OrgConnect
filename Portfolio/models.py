@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from MediaManagement.file_name import get_name_of_file
 
 
 class PortfolioModel(models.Model):
@@ -13,7 +14,7 @@ class PortfolioModel(models.Model):
     github_url = models.URLField(null=True)
     kaggle_url = models.URLField(null=True)
     google_scholar_url = models.URLField(null=True)
-    image_url = models.URLField(max_length=2048, null=True)
+    image_url = models.ImageField(upload_to=get_name_of_file)
 
     class Meta:
         verbose_name = 'Portfolio Model'
