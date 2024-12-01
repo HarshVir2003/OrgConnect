@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
+from MediaManagement.file_name import get_name_of_file
 
 
 class CustomUserManager(BaseUserManager):
@@ -27,6 +28,7 @@ class CustomUser(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    image = models.ImageField(upload_to=get_name_of_file)
 
     objects = CustomUserManager()
 
