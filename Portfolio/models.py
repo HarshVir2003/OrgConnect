@@ -14,7 +14,7 @@ class PortfolioModel(models.Model):
     github_url = models.URLField(null=True)
     kaggle_url = models.URLField(null=True)
     google_scholar_url = models.URLField(null=True)
-    image_url = models.ImageField(upload_to=get_name_of_file)
+    image_url = models.ImageField(upload_to=get_name_of_file, null=True)
 
     class Meta:
         verbose_name = 'Portfolio Model'
