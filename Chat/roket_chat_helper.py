@@ -4,6 +4,7 @@ ADMIN_API_TOKEN = config('ADMIN_API_TOKEN')
 ADMIN_USER_ID = config('ADMIN_USER_ID')
 ROCKET_CHAT_URL = "http://localhost:3000"
 
+
 def get_headers():
     """Return headers required for Rocket.Chat API authentication."""
     return {
