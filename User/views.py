@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import redirect
 from django.urls import reverse
+import requests
 
 
 class UserList(generics.RetrieveAPIView):
@@ -37,6 +38,13 @@ class UserRegister(APIView):
                     serializer.save()
                     user = authenticate(username=request.data['username'], password=request.data['password'])
                     login(request, user)
+
+                    # register user for chat app
+                    url = reverse('create_user_chat')
+                    requests.post(url, json={'username': request.data['username'], 'email': request.data['email'],
+                                             'password': request.data['password']})
+
+                    # redirect to user profile page
                     url = reverse('User', kwargs={'id': request.user.id})
                     return redirect(url)
                 else:
