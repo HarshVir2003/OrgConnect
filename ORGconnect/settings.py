@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 from decouple import config
 
@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'JobUpdates',
     'MediaManagement',
     'Portfolio',
-    'User'
+    'User',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -142,11 +143,20 @@ USE_TZ = True
 #
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME')
 AWS_S3_CUSTOM_DOMAIN = config('AWS_S3_CUSTOM_DOMAIN', default=None)
+AWS_DEFAULT_ACL = config('AWS_DEFAULT_ACL')
+
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/'
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN or AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
+STATIC_URL = f'{AWS_S3_CUSTOM_DOMAIN}/static/'
+
+STORAGES = {
+    "default": {"BACKEND": 'storages.backends.s3boto3.S3Boto3Storage'},
+    "staticfiles": {"BACKEND": 'storages.backends.s3boto3.S3Boto3Storage'},
+}
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=2592000",
+}
