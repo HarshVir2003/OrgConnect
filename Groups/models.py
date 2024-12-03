@@ -9,9 +9,9 @@ from MediaManagement.file_name import get_name_of_file
 class Contacts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
     friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friend')
-    chat_url = models.URLField(null=True, blank=True)
+    chat_url = models.TextField()
 
-    def save(self, *args, **kwargs):
+    def on_save(self, *args, **kwargs):
         link = ChatLinkMaker(self.user.username, self.friend.username)
         link = link.make_link()
         self.chat_url = link
@@ -34,13 +34,13 @@ class Group(models.Model):
     name = models.CharField(max_length=1024, blank=False)
     profile_img = models.ImageField(upload_to=get_name_of_file, null=True)
     members = models.ManyToManyField(User)
-    chat_url = models.URLField(null=False)
+    chat_url = models.TextField()
     community = models.ForeignKey(Community, on_delete=models.CASCADE, blank=False)
 
     def get_members(self):
         return [x for x in self.members.all()]
 
-    def save(self, *args, **kwargs):
+    def on_save(self, *args, **kwargs):
         link = ChatLinkMaker(self.name, self.community.name)
         link = link.make_link()
         self.chat_url = link

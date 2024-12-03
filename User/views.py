@@ -40,7 +40,7 @@ class UserRegister(APIView):
                     login(request, user)
 
                     # register user for chat app
-                    url = reverse('create_user_chat')
+                    url = 'http://localhost:8000/chat/create-user'
                     requests.post(url, json={'username': request.data['username'], 'email': request.data['email'],
                                              'password': request.data['password']})
 

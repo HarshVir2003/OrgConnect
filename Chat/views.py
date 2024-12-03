@@ -1,8 +1,12 @@
+from rest_framework.decorators import permission_classes
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from .roket_chat_helper import create_user, send_message
+from twisted.names.client import query
+from .linkbuiilder import get_room_id
+
+from .roket_chat_helper import create_user, send_message, get_chat_history
 from django.contrib.auth.models import User
 
 
@@ -42,3 +46,31 @@ class SendMessageAPIView(APIView):
             return Response({"message": "Message sent successfully."}, status=status.HTTP_200_OK)
         else:
             return Response({"error": response.get("error")}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetChatHistoryAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    queryset = User.objects.all()
+    def get(self, request):
+        """
+        Retrieve chat history from Rocket.Chat.
+        """
+        room_id = get_room_id('')# enter name here
+        count = request.query_params.get("count", 50)
+
+        if not room_id:
+            return Response({"error": "room_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate count parameter
+        try:
+            count = int(count)
+        except ValueError:
+            return Response({"error": "count must be an integer"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Fetch chat history
+        history = get_chat_history(room_id, count)
+
+        if "error" in history:
+            return Response(history["error"], status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(history, status=status.HTTP_200_OK)
