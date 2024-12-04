@@ -153,16 +153,6 @@ AWS_DEFAULT_ACL = config('AWS_DEFAULT_ACL')
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/'
 STATIC_URL = f'{AWS_S3_CUSTOM_DOMAIN}/static/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'orgconnectdotorg@gmail.com'
-EMAIL_HOST_PASSWORD = config('GOOGLE_APP_PASSWORD')
-
-
-
-
 STORAGES = {
     "default": {"BACKEND": 'storages.backends.s3boto3.S3Boto3Storage'},
     "staticfiles": {"BACKEND": 'storages.backends.s3boto3.S3Boto3Storage'},
@@ -170,3 +160,10 @@ STORAGES = {
 AWS_S3_OBJECT_PARAMETERS = {
     "CacheControl": "max-age=2592000",
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'orgconnectdotorg@gmail.com'
+EMAIL_HOST_PASSWORD = config('GOOGLE_APP_PASSWORD')
