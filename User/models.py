@@ -34,14 +34,14 @@ class CustomUser(AbstractBaseUser):
     image = models.ImageField(upload_to=get_name_of_file, null=True)
 
     def save(self, *args, **kwargs):
-        if self.file:
-            img = Image.open(self.file)
+        if self.image:
+            img = Image.open(self.image)
             img = img.convert("RGB")
             img.thumbnail((800, 800))
             buffer = BytesIO()
             img.save(buffer, format='JPEG', quality=85)
             buffer.seek(0)
-            self.file = ContentFile(buffer.read(), name=self.file.name)
+            self.file = ContentFile(buffer.read(), name=self.image.name)
         super().save(*args, **kwargs)
 
     objects = CustomUserManager()

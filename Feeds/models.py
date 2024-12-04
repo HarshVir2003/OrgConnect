@@ -26,14 +26,14 @@ class Posts(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        if self.file:
-            img = Image.open(self.file)
+        if self.image_url:
+            img = Image.open(self.image_url)
             img = img.convert("RGB")
             img.thumbnail((800, 800))
             buffer = BytesIO()
             img.save(buffer, format='JPEG', quality=85)
             buffer.seek(0)
-            self.file = ContentFile(buffer.read(), name=self.file.name)
+            self.file = ContentFile(buffer.read(), name=self.image_url.name)
         super().save(*args, **kwargs)
 
     class Meta:

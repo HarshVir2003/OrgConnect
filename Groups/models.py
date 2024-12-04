@@ -1,5 +1,4 @@
 from io import BytesIO
-
 from PIL import Image
 from django.core.files.base import ContentFile
 from django.db import models
@@ -30,14 +29,14 @@ class Community(models.Model):
     admins = models.ManyToManyField(User)
 
     def save(self, *args, **kwargs):
-        if self.file:
-            img = Image.open(self.file)
+        if self.profile_img:
+            img = Image.open(self.profile_img)
             img = img.convert("RGB")
             img.thumbnail((800, 800))
             buffer = BytesIO()
             img.save(buffer, format='JPEG', quality=85)
             buffer.seek(0)
-            self.file = ContentFile(buffer.read(), name=self.file.name)
+            self.file = ContentFile(buffer.read(), name=self.profile_img.name)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -52,14 +51,14 @@ class Group(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE, blank=False)
 
     def save(self, *args, **kwargs):
-        if self.file:
-            img = Image.open(self.file)
+        if self.profile_img:
+            img = Image.open(self.profile_img)
             img = img.convert("RGB")
             img.thumbnail((800, 800))
             buffer = BytesIO()
             img.save(buffer, format='JPEG', quality=85)
             buffer.seek(0)
-            self.file = ContentFile(buffer.read(), name=self.file.name)
+            self.file = ContentFile(buffer.read(), name=self.profile_img.name)
         super().save(*args, **kwargs)
 
     def get_members(self):
