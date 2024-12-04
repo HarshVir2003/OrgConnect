@@ -50,7 +50,7 @@ class PasswordResetRequestView(APIView):
             send_mail(
                 subject='Password Reset Request',
                 message=f'Click the link to reset your password: {reset_url}',
-                from_email='your_email@gmail.com',
+                from_email='orgconnectdotorg@gmail.com',
                 recipient_list=[email],
             )
             return Response({'message': 'Password reset email sent.'}, status=status.HTTP_200_OK)
