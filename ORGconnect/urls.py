@@ -16,6 +16,7 @@ Including another URLconfADMIN_USER_ID
 """
 from django.contrib import admin
 from django.urls import path, include
+from .views import PasswordResetConfirmView, PasswordResetRequestView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,5 +26,7 @@ urlpatterns = [
     path('groups/', include('Groups.urls')),
     path('portfolio/', include('Portfolio.urls')),
     path('feeds/', include('Feeds.urls')),
+    path('password-reset/', PasswordResetRequestView.as_view(), name='password-reset'),
+    path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
     path('chat/', include('Chat.urls'))
 ]
