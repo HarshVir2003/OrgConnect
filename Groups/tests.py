@@ -1,3 +1,5 @@
+from io import BytesIO
+
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -5,6 +7,15 @@ from rest_framework import status
 
 from Groups.models import Contacts, Community, Group
 from rest_framework.test import APITestCase, APIClient
+from PIL import Image
+from django.core.files.base import ContentFile
+
+
+img_io = BytesIO()
+img = Image.open('/home/jass/Downloads/a-drop-of-pink-and-yellow-paint-in-water.jpg')
+img.save(img_io, format='JPEG')
+img_io.seek(0)
+img = ContentFile(img_io.read(), name='test_img.jpg')
 
 
 class ContactsModelTest(TestCase):
@@ -28,7 +39,7 @@ class CommunityModelTest(TestCase):
         self.community = Community.objects.create(
             name='Test Community',
             description='A test community',
-            profile_img='http://example.com/img.jpg',
+            profile_img=img,
         )
         self.community.admins.add(self.user)
 
@@ -44,12 +55,12 @@ class GroupModelTest(TestCase):
         self.user2 = User.objects.create_user(username='user2', password='password123')
         self.community = Community.objects.create(
             name='Community 1',
-            profile_img='http://example.com/img.jpg',
+            profile_img=img,
         )
         self.group = Group.objects.create(
             name='Test Group',
-            profile_img='http://example.com/group_img.jpg',
-            chat_url='http://example.com/chat',
+            profile_img=img,
+            chat_url=img,
             community=self.community,
         )
         self.group.members.add(self.user1, self.user2)
@@ -68,11 +79,11 @@ class GroupModelTest(TestCase):
 class GroupsAPITest(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', password='password123')
-        self.community = Community.objects.create(name='Test Community', profile_img='http://example.com/img.jpg')
+        self.community = Community.objects.create(name='Test Community', profile_img=img)
         self.group = Group.objects.create(
             name='Test Group',
-            profile_img='http://example.com/group_img.jpg',
-            chat_url='http://example.com/chat',
+            profile_img=img,
+            chat_url=img,
             community=self.community,
         )
         self.group.members.add(self.user)
@@ -87,9 +98,9 @@ class GroupsAPITest(APITestCase):
     def test_create_group(self):
         data = {
             'name': 'New Group',
-            'profile_img': 'http://example.com/new_img.jpg',
+            'profile_img': img,
             'members': [1],
-            'chat_url': 'http://example.com/new_img.jpg',
+            'chat_url': img,
             'community': self.community.id
         }
         response = self.client.post(self.url, data)
@@ -99,7 +110,7 @@ class GroupsAPITest(APITestCase):
 class CommunityAPITest(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='adminuser', password='password123')
-        self.community = Community.objects.create(name='Community 1', profile_img='http://example.com/img.jpg')
+        self.community = Community.objects.create(name='Community 1', profile_img=img)
         self.community.admins.add(self.user)
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
@@ -113,7 +124,7 @@ class CommunityAPITest(APITestCase):
         data = {
             'name': 'New Community',
             'description': 'A new community description',
-            'profile_img': 'http://example.com/new_img.jpg',
+            'profile_img': img,
             'admins': [1]
         }
         response = self.client.post(self.url, data)

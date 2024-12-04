@@ -1,8 +1,17 @@
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.test import TestCase
+from setuptools.command.alias import format_alias
+from io import BytesIO
 from Feeds.models import Posts, Comments, Likes
+from PIL import Image
+from django.core.files.base import ContentFile
 
+img_io = BytesIO()
+img = Image.open('/home/jass/Downloads/a-drop-of-pink-and-yellow-paint-in-water.jpg')
+img.save(img_io, format='JPEG')
+img_io.seek(0)
+img = ContentFile(img_io.read(), name='test_img.jpg')
 
 class FeedsTestCase(TestCase):
     def setUp(self):
@@ -15,9 +24,9 @@ class FeedsTestCase(TestCase):
 
         # Create posts
         self.post1 = Posts.objects.create(user_id=self.user1, content="First Post",
-                                          image_url="http://example.com/1.jpg")
+                                          image_url=img)
         self.post2 = Posts.objects.create(user_id=self.user2, content="Second Post",
-                                          image_url="http://example.com/2.jpg")
+                                          image_url=img)
 
         # Create comment
         self.comment = Comments.objects.create(user_id=self.user1, post_id=self.post1, content="Nice Post!")
@@ -40,7 +49,7 @@ class FeedsTestCase(TestCase):
     def test_create_post(self):
         """Test creating a new post."""
         self.authenticate()
-        post_data = {'content': 'New post', 'image_url': 'http://example.com/new.jpg', 'Privacy_level': 0}
+        post_data = {'content': 'New post', 'image_url': img, 'Privacy_level': 0}
         response = self.client.post(reverse('post-create'), data=post_data)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['content'], 'New post')
@@ -119,7 +128,7 @@ class FeedsTestCase(TestCase):
 
     def test_create_post_without_authentication(self):
         """Test creating a post without authentication."""
-        post_data = {'content': 'Unauthorized post', 'image_url': 'http://example.com/unauth.jpg', 'Privacy_level': 0}
+        post_data = {'content': 'Unauthorized post', 'image_url': img, 'Privacy_level': 0}
         response = self.client.post(reverse('post-create'), data=post_data)
         self.assertEqual(response.status_code, 403)
 
@@ -135,9 +144,9 @@ class FeedsAdditionalTestCase(TestCase):
 
         # Create posts
         self.post1 = Posts.objects.create(user_id=self.user1, content="First Post",
-                                          image_url="http://example.com/1.jpg")
+                                          image_url=img)
         self.post2 = Posts.objects.create(user_id=self.user2, content="Second Post",
-                                          image_url="http://example.com/2.jpg")
+                                          image_url=img)
 
         # Create comments
         self.comment1 = Comments.objects.create(user_id=self.user1, post_id=self.post1, content="Nice Post!")
@@ -183,7 +192,7 @@ class FeedsAdditionalTestCase(TestCase):
         self.authenticate()
         long_content = 'A' * 10001  # 1 character over the limit
         response = self.client.post(reverse('post-create'),
-                                    data={'content': long_content, 'image_url': 'http://example.com/new.jpg'})
+                                    data={'content': long_content, 'image_url': img})
         self.assertEqual(response.status_code, 403)
 
     # 4. Test creating a comment without a post reference
