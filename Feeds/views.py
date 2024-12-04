@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from Feeds.Serializer import CommentsSerializers, LikesSerializers, PostsSerializer
 from Feeds.processing import DataBuilder
+from Feeds.pagination import CustomPagination
 
 
 class FeedView(APIView):
@@ -19,6 +20,8 @@ class FeedView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             data = self.get_queryset()
+            paginator = CustomPagination()
+            data = paginator.paginate_queryset(data, request, view=self)
             serializer = self.serializer_class(data, many=True)
             return Response(serializer.data)
         except Posts.DoesNotExist:
