@@ -13,7 +13,8 @@ from rest_framework import status
 
 class PasswordResetConfirmView(APIView):
     permission_classes = [IsAuthenticated]
-    queryset=User.objects.all()
+    queryset = User.objects.all()
+
     def post(self, request, uidb64, token):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
@@ -33,7 +34,8 @@ class PasswordResetConfirmView(APIView):
 
 class PasswordResetRequestView(APIView):
     permission_classes = [IsAuthenticated]
-    queryset=User.objects.all()
+    queryset = User.objects.all()
+
     def post(self, request):
         email = request.data.get('email')
         try:
@@ -54,5 +56,3 @@ class PasswordResetRequestView(APIView):
             return Response({'message': 'Password reset email sent.'}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'error': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-
-

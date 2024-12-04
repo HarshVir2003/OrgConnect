@@ -1,3 +1,7 @@
+from io import BytesIO
+
+from PIL import Image
+from django.core.files.base import ContentFile
 from django.db import models
 from django.contrib.auth.models import User
 from MediaManagement.file_name import get_name_of_file
@@ -15,6 +19,17 @@ class PortfolioModel(models.Model):
     kaggle_url = models.URLField(null=True)
     google_scholar_url = models.URLField(null=True)
     image_url = models.ImageField(upload_to=get_name_of_file, null=True)
+
+    def save(self, *args, **kwargs):
+        if self.file:
+            img = Image.open(self.file)
+            img = img.convert("RGB")
+            img.thumbnail((800, 800))
+            buffer = BytesIO()
+            img.save(buffer, format='JPEG', quality=85)
+            buffer.seek(0)
+            self.file = ContentFile(buffer.read(), name=self.file.name)
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Portfolio Model'

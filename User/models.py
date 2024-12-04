@@ -1,4 +1,7 @@
+from io import BytesIO
+from PIL import Image
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.core.files.base import ContentFile
 from django.db import models
 from MediaManagement.file_name import get_name_of_file
 
@@ -29,6 +32,17 @@ class CustomUser(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     image = models.ImageField(upload_to=get_name_of_file, null=True)
+
+    def save(self, *args, **kwargs):
+        if self.file:
+            img = Image.open(self.file)
+            img = img.convert("RGB")
+            img.thumbnail((800, 800))
+            buffer = BytesIO()
+            img.save(buffer, format='JPEG', quality=85)
+            buffer.seek(0)
+            self.file = ContentFile(buffer.read(), name=self.file.name)
+        super().save(*args, **kwargs)
 
     objects = CustomUserManager()
 
