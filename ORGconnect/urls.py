@@ -16,7 +16,7 @@ Including another URLconfADMIN_USER_ID
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import PasswordResetConfirmView, PasswordResetRequestView
+from .views import PasswordResetConfirmView, PasswordResetRequestView, google_login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,5 +28,10 @@ urlpatterns = [
     path('feeds/', include('Feeds.urls')),
     path('password-reset/', PasswordResetRequestView.as_view(), name='password-reset'),
     path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
-    path('chat/', include('Chat.urls'))
+    path('chat/', include('Chat.urls')),
+
+    path('auth/', include('social_django.urls', namespace='social')),
+    path('accounts', include('allauth.urls')),
+    path('auth/google/', google_login, name='google_login'),
+    # path('auth/google/', GoogleLoginView.as_view(), name='google-login'),
 ]
