@@ -20,14 +20,14 @@ class UserList(generics.RetrieveAPIView):
 
 class UserRegister(APIView):
     permission_classes = [AllowAny]
+    http_method_names = ['post']
 
-    # todo: remove in final version
-    def get(self, request, *args, **kwargs):
-        serializer = UserRegistrationSerializer()
-        if request.user.is_authenticated:
-            url = reverse('User', kwargs={'id': request.user.id})
-            return redirect(url)
-        return Response(serializer.data)
+    # def get(self, request, *args, **kwargs):
+    #     serializer = UserRegistrationSerializer()
+    #     if request.user.is_authenticated:
+    #         url = reverse('User', kwargs={'id': request.user.id})
+    #         return redirect(url)
+    #     return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
         serializer = UserRegistrationSerializer(data=request.data)
@@ -56,14 +56,14 @@ class UserRegister(APIView):
 
 class UserLogin(APIView):
     permission_classes = [AllowAny]
+    http_method_names = ['post']
 
-    # todo: remove in final version
-    def get(self, request, *args, **kwargs):
-        serializer = UserLoginSerializer()
-        if request.user.is_authenticated:
-            url = reverse('User', kwargs={'id': request.user.id})
-            return redirect(url)
-        return Response(serializer.data)
+    # def get(self, request, *args, **kwargs):
+    #     serializer = UserLoginSerializer()
+    #     if request.user.is_authenticated:
+    #         url = reverse('User', kwargs={'id': request.user.id})
+    #         return redirect(url)
+    #     return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
         serializer = UserLoginSerializer(data=request.data)

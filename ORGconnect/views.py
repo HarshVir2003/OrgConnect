@@ -62,7 +62,7 @@ class PasswordResetRequestView(APIView):
             # Send the email
             send_mail(
                 subject='Password Reset Request',
-                message=f'Front end -point to be provided. ref: docs for details.',
+                message=f'Front end-point to be provided. refer docs for details.',
                 from_email='orgconnectdotorg@gmail.com',
                 recipient_list=[email],
             )
@@ -88,8 +88,8 @@ def google_login(request):
                 last_name = user_info.get('family_name')  # This may or may not be available
                 picture = user_info.get('picture')
 
-                # Print user info for debugging
-                print(user_info)
+                # # Print user info for debugging
+                # print(user_info)
 
                 # Check if the user already exists
                 user = User.objects.filter(email=email).first()
