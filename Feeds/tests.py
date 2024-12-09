@@ -13,6 +13,7 @@ img.save(img_io, format='JPEG')
 img_io.seek(0)
 img = ContentFile(img_io.read(), name='test_img.jpg')
 
+
 class FeedsTestCase(TestCase):
     def setUp(self):
         # Create users

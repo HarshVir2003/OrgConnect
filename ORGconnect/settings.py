@@ -113,12 +113,17 @@ WSGI_APPLICATION = 'ORGconnect.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # todo: change to env for prod.
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+use_postgres = False
+
+if use_postgres:
+    pass
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
