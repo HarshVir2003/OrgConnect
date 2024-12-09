@@ -31,7 +31,7 @@ class AchievementsGet(generics.ListCreateAPIView):
             return Response({'message': "User doesn't exists."}, status=status.HTTP_404_NOT_FOUND)
 
 
-# todo: application of data updation
+
 class AchievementsPost(APIView):
     serializer_class = AchievementsSerializer
     permission_classes = [IsAuthenticated]
@@ -46,10 +46,9 @@ class AchievementsPost(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
-    # todo: requires a token id not in url but in request
-    def put(self, request):
+    def put(self, request, id=None):
         try:
-            achievement = Achievements.objects.get(user_id=request.user, id=request.data['id'])
+            achievement = Achievements.objects.get(user_id=request.user, id=id)
         except Achievements.DoesNotExist:
             return Response({'message': 'Achievement does not exists'}, status=status.HTTP_404_NOT_FOUND)
 

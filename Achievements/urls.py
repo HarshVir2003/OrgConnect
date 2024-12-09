@@ -3,5 +3,6 @@ from Achievements.views import AchievementsGet, AchievementsPost
 
 urlpatterns = [
     path('<int:id>/', AchievementsGet.as_view(), name='getAchievement'),
-    path('post/', AchievementsPost.as_view(), name='postAchievement')
+    path('post/', AchievementsPost.as_view(), name='postAchievement'),
+    path('post/<int:id>', AchievementsPost.as_view(), name='updateAchievement')
 ]
