@@ -81,25 +81,35 @@ def google_login(request):
             # Verify the token and get user info from Google
             url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + id_token
             response = requests.get(url)
-
             if response.status_code == 200:
                 user_info = response.json()
                 email = user_info.get('email')
                 first_name = user_info.get('given_name')
-                last_name = user_info.get('family_name')
+                last_name = user_info.get('family_name')  # This may or may not be available
                 picture = user_info.get('picture')
+
+                # Print user info for debugging
+                print(user_info)
 
                 # Check if the user already exists
                 user = User.objects.filter(email=email).first()
 
                 if not user:
-                    # Create a new user
-                    user = User.objects.create_user(
-                        username=email,
-                        email=email,
-                        first_name=first_name,
-                        last_name=last_name
-                    )
+                    # Create a new user, use last_name if available
+                    if last_name:
+                        user = User.objects.create_user(
+                            username=email,
+                            email=email,
+                            first_name=first_name,
+                            last_name=last_name
+                        )
+                    else:
+                        # If last_name is not provided, create user without it
+                        user = User.objects.create_user(
+                            username=email,
+                            email=email,
+                            first_name=first_name
+                        )
 
                 # Log the user in
                 login(request, user)
@@ -112,3 +122,4 @@ def google_login(request):
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid method"}, status=405)
+
