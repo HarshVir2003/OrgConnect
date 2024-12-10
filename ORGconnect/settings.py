@@ -109,7 +109,7 @@ WSGI_APPLICATION = 'ORGconnect.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # todo: change to env for prod.
-use_postgres = False
+use_postgres = config('USE_POSTGRE', cast=bool)
 
 if use_postgres:
     DATABASES = {
