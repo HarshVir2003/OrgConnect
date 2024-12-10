@@ -146,10 +146,6 @@ class ContactView(ListCreateAPIView):
         if serializer.is_valid():
             user = serializer.validated_data.get('user')
             friend = serializer.validated_data.get('friend')
-            usernames = sorted([user.username, friend.username])
-            user_encoded = quote(usernames[0])
-            friend_enocded = quote(usernames[1])
-            chat_url = f'test.com/{user_encoded}/{friend_enocded}'
-            contact = Contacts.objects.create(user=user, friend=friend, chat_url=chat_url)
+            contact = Contacts.objects.create(user=user, friend=friend)
             return Response(ContactsSerializer(contact).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)

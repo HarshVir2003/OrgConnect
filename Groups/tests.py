@@ -100,7 +100,7 @@ class GroupsAPITest(APITestCase):
             'name': 'New Group',
             'profile_img': img,
             'members': [1],
-            'chat_url': img,
+            'chat_url': 'null',
             'community': self.community.id
         }
         response = self.client.post(self.url, data)
