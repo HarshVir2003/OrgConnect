@@ -31,7 +31,6 @@ class AchievementsGet(generics.ListCreateAPIView):
             return Response({'message': "User doesn't exists."}, status=status.HTTP_404_NOT_FOUND)
 
 
-
 class AchievementsPost(APIView):
     serializer_class = AchievementsSerializer
     permission_classes = [IsAuthenticated]
@@ -52,7 +51,7 @@ class AchievementsPost(APIView):
         except Achievements.DoesNotExist:
             return Response({'message': 'Achievement does not exists'}, status=status.HTTP_404_NOT_FOUND)
 
-        if len(request.data) > 2:
+        if len(request.data) > 1:
             return Response({'message': 'forbidden'}, status=status.HTTP_403_FORBIDDEN)
         if request.data['Privacy_level'] and int(request.data['Privacy_level']) in [0, 1, 2]:
             privacy_level = request.data['Privacy_level']

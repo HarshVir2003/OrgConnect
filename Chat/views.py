@@ -33,6 +33,7 @@ class CreateUserAPIView(APIView):
 class SendMessageAPIView(APIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
+
     def post(self, request):
         room_id = request.data.get("room_id")
         message = request.data.get("message")
@@ -51,11 +52,12 @@ class SendMessageAPIView(APIView):
 class GetChatHistoryAPIView(APIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
+
     def get(self, request):
         """
         Retrieve chat history from Rocket.Chat.
         """
-        room_id = get_room_id('')# enter name here
+        room_id = get_room_id('')  # enter name here
         count = request.query_params.get("count", 50)
 
         if not room_id:
