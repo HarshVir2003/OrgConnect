@@ -109,10 +109,22 @@ WSGI_APPLICATION = 'ORGconnect.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # todo: change to env for prod.
-use_postgres = False
+use_postgres = config('USE_POSTGRE', cast=bool)
 
 if use_postgres:
-    pass
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': None,
+            'USER': config('DATABASE_USER'),
+            'PASSWORD': config('DATABASE_PASSWORD'),
+            'HOST': config('DATABASE_HOST'),
+            'PORT': config('DATABASE_PORT'),
+        }
+    }
+    DATABASES['default']['OPTIONS'] = {
+        'sslmode': 'require',
+    }
 else:
     DATABASES = {
         'default': {

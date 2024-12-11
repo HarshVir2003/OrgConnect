@@ -50,3 +50,4 @@ typing_extensions==4.12.2
 tzdata==2024.1
 urllib3==2.2.3
 zope.interface==7.0.3
+psycopg2-binary==2.9.10
