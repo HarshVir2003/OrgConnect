@@ -1,3 +1,5 @@
+from drf_yasg.utils import swagger_auto_schema
+from pyasn1_modules.rfc3279 import tpBasis
 from rest_framework.decorators import permission_classes
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -5,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 import json
 from .linkbuiilder import get_room_id
-
+from drf_yasg import openapi
 from .roket_chat_helper import create_user, send_message, get_chat_history
 from django.contrib.auth.models import User
 
@@ -14,6 +16,9 @@ class CreateUserAPIView(APIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
 
+    @swagger_auto_schema(
+        operation_summary="NOT FOR USER SIDE"
+    )
     def post(self, request):
         username = request.data.get("username")
         email = request.data.get("email")
@@ -34,8 +39,28 @@ class SendMessageAPIView(APIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
 
-    def post(self, request, id=None):
-        room_id = id
+    @swagger_auto_schema(
+        operation_summary='Sending messages in a chat Socket',
+        operation_description="In this operation we send messages in the socket, get the room id from the group or contact object and forward here.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'message': openapi.Schema(type=openapi.TYPE_STRING)
+            },
+            required=['message']
+        ),
+        manual_parameters=[
+            openapi.Parameter(
+                'id',  # the name of the path parameter
+                openapi.IN_PATH,  # location of the parameter (in the path)
+                type=openapi.TYPE_STRING,  # define the parameter type as string
+                description="A unique string value identifying this user",  # parameter description
+                required=True,  # specify that it's required
+            )
+        ]
+    )
+    def post(self, request, id: str = None):
+        room_id = get_room_id(id)
         message = request.data.get("message")
 
         if not room_id or not message:
@@ -52,8 +77,31 @@ class SendMessageAPIView(APIView):
 class SendReferAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_summary='Sending referals in a chat Socket',
+        operation_description="In this operation we send referals in the socket, get the room id from the group or contact object and forward here.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'link': openapi.Schema(type=openapi.TYPE_STRING),
+                'job_at': openapi.Schema(type=openapi.TYPE_STRING),
+                'job_des': openapi.Schema(type=openapi.TYPE_STRING),
+                'additional_data': openapi.Schema(type=openapi.TYPE_OBJECT)
+            },
+            required=['message']
+        ),
+        manual_parameters=[
+            openapi.Parameter(
+                'id',  # the name of the path parameter
+                openapi.IN_PATH,  # location of the parameter (in the path)
+                type=openapi.TYPE_STRING,  # define the parameter type as string
+                description="A unique string value identifying this user",  # parameter description
+                required=True,  # specify that it's required
+            )
+        ]
+    )
     def post(self, request, id=None):
-        room_id = id
+        room_id = get_room_id(id)
         link = request.data.get('link')
         job_at = request.data.get('job_at')
         job_des = request.data.get('job_des')
