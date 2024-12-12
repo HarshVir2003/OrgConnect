@@ -38,7 +38,7 @@ class FeedsTestCase(TestCase):
     def authenticate(self):
         """Log in the user and return the authentication status."""
         response = self.client.post(reverse('login'), data=self.login_data)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
 
     def test_get_feeds(self):
         """Test retrieving all posts for the authenticated user."""
@@ -160,7 +160,7 @@ class FeedsAdditionalTestCase(TestCase):
     def authenticate(self):
         """Log in the user and return the authentication status."""
         response = self.client.post(reverse('login'), data=self.login_data)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
 
     """
     Post updating not part of first version words of His Holiness the team leader himself !!!.
@@ -243,11 +243,11 @@ class FeedsAdditionalTestCase(TestCase):
 
     # 11. Test retrieving posts with pagination
     # Not needed in first version. -HVS
-    # def test_pagination_in_feeds(self):
-    #     self.authenticate()
-    #     response = self.client.get(reverse('feeds') + '?page=1&limit=1')
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(len(response.data), 1)  # Should return only 1 post
+    def test_pagination_in_feeds(self):
+        self.authenticate()
+        response = self.client.get(reverse('feeds') + '?page=1&limit=1')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)  # Should return only 1 post
 
     # 12. Test deleting a post without providing ID
     def test_delete_post_without_id(self):

@@ -26,7 +26,7 @@ class UserAuthTests(APITestCase):
             'password_confirm': 'newpassword'
         }
         response = self.client.post(self.register_url, data)
-        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(User.objects.filter(username='newuser').exists())
 
     def test_user_registration_invalid(self):
@@ -48,7 +48,7 @@ class UserAuthTests(APITestCase):
             'password': 'testpassword'
         }
         response = self.client.post(self.login_url, data)
-        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_login_invalid(self):
         data = {
@@ -62,7 +62,7 @@ class UserAuthTests(APITestCase):
         self.client.login(username='testuser', password='testpassword')
         self.assertTrue(self.client.session['_auth_user_id'])
         response = self.client.get(self.logout_url)
-        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse('_auth_user_id' in self.client.session)
 
     def test_get_user_profile_authenticated(self):
@@ -87,7 +87,7 @@ class UserAuthTests(APITestCase):
         response2 = self.client.post(self.register_url, data)
         response = self.client.post(self.register_url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response2.status_code, status.HTTP_302_FOUND)
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
         self.assertTrue(User.objects.filter(username='newuser').exists())
 
     def test_get_unknown_user(self):

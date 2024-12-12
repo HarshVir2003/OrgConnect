@@ -45,8 +45,7 @@ class UserRegister(APIView):
                                              'password': request.data['password']})
 
                     # redirect to user profile page
-                    url = reverse('User', kwargs={'id': request.user.id})
-                    return redirect(url)
+                    return Response({'message': 'Logged in.'}, status=status.HTTP_200_OK)
                 else:
                     return Response({"message": "Already Registered."}, status=status.HTTP_400_BAD_REQUEST)
             else:
@@ -76,15 +75,17 @@ class UserLogin(APIView):
 
             if request.user.is_authenticated:
                 # temp redirect to profile
-                url = reverse('User', kwargs={'id': request.user.id})
-                return redirect(url)
+                return Response({'message': 'logged in.'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-def logout_user(request):
-    logout(request)
-    # temp redirect to login
-    return redirect(reverse('login'))
+class LogoutView(APIView):
+    http_method_names = ['get']
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        logout(request)
+        return Response({'message': 'logged out successfully'}, status=status.HTTP_200_OK)
 
 
 def profile_view(request):
