@@ -10,11 +10,11 @@ from Achievements.processing import DataBuilder
 from Achievements.models import Achievements
 from .Serializer import AchievementsSerializer
 
+
 class AchievementsGet(generics.ListCreateAPIView):
     serializer_class = AchievementsSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ['get']
-
 
     def get_queryset(self):
         user_id = self.kwargs.get('id')
@@ -55,7 +55,6 @@ class AchievementsPost(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
-
     @swagger_auto_schema(
         operation_summary="Update an existing post",
         operation_description='only the privacy levels, enter the achievement object id and level change value',
@@ -86,8 +85,6 @@ class AchievementsPost(APIView):
             return Response({'message': 'Achievement updated'}, status=status.HTTP_200_OK)
         else:
             return Response({'message': "privacy level is None"}, status=status.HTTP_400_BAD_REQUEST)
-
-
 
     @swagger_auto_schema(
         operation_summary="Delete an existing achievement",

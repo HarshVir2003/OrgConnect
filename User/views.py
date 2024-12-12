@@ -8,8 +8,14 @@ from rest_framework.response import Response
 from django.shortcuts import redirect
 from django.urls import reverse
 import requests
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
+@swagger_auto_schema(
+    operation_summary='Get profile of user.',
+    operation_description='Get profile of a given user, given the ID of the user.',
+)
 class UserList(generics.RetrieveAPIView):
     http_method_names = ['get']
     queryset = User.objects.all()
@@ -29,6 +35,11 @@ class UserRegister(APIView):
     #         return redirect(url)
     #     return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_summary='POST User Register',
+        operation_description='User Registration endpoint.',
+        request_body=UserRegistrationSerializer
+    )
     def post(self, request, *args, **kwargs):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
@@ -64,6 +75,10 @@ class UserLogin(APIView):
     #         return redirect(url)
     #     return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_summary='POST Login.',
+        request_body=UserLoginSerializer
+    )
     def post(self, request, *args, **kwargs):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -83,12 +98,22 @@ class LogoutView(APIView):
     http_method_names = ['get']
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_summary='GET Logout',
+        operation_description='Logout user by passing request object.',
+        responses={200: 'logged out successfully'}
+    )
     def get(self, request):
         logout(request)
         return Response({'message': 'logged out successfully'}, status=status.HTTP_200_OK)
 
 
-def profile_view(request):
-    if request.user.is_authenticated:
-        return redirect(reverse('User', kwargs={'id': request.user.id}))
-    return Response({"message": "Not Authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+class ProfileView(APIView):
+    @swagger_auto_schema(
+        operation_summary='GET current user\'s id.',
+        responses={302: 'user is logged in.', 401: 'user not authenticated.', 200:None}
+    )
+    def get(self, request):
+        if request.user.is_authenticated:
+            return redirect(reverse('User', kwargs={'id': request.user.id}))
+        return Response({"message": "Not Authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
