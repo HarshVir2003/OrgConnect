@@ -95,54 +95,53 @@ class PasswordResetRequestView(APIView):
             return Response({'error': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
 
-@csrf_exempt  # Disable CSRF protection for testing purposes (not recommended in production)
-def google_login(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            id_token = data.get('id_token')
+class GoogleLoginView(APIView):
+    @swagger_auto_schema(
+        operation_summary='Google Login Endpoint.',
+    )
+    @csrf_exempt
+    def post(self, request):
+        if request.method == "POST":
+            try:
+                data = json.loads(request.body)
+                id_token = data.get('id_token')
 
-            # Verify the token and get user info from Google
-            url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + id_token
-            response = requests.get(url)
-            if response.status_code == 200:
-                user_info = response.json()
-                email = user_info.get('email')
-                first_name = user_info.get('given_name')
-                last_name = user_info.get('family_name')  # This may or may not be available
-                picture = user_info.get('picture')
+                # Verify the token and get user info from Google
+                url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + id_token
+                response = requests.get(url)
+                if response.status_code == 200:
+                    user_info = response.json()
+                    email = user_info.get('email')
+                    first_name = user_info.get('given_name')
+                    last_name = user_info.get('family_name')  # This may or may not be available
+                    picture = user_info.get('picture')
 
-                # # Print user info for debugging
-                # print(user_info)
+                    # # Print user info for debugging
+                    # print(user_info)
 
-                # Check if the user already exists
-                user = User.objects.filter(email=email).first()
+                    # Check if the user already exists
+                    user = User.objects.filter(email=email).first()
 
-                if not user:
-                    # Create a new user, use last_name if available
-                    if last_name:
-                        user = User.objects.create_user(
-                            username=email,
-                            email=email,
-                            first_name=first_name,
-                            last_name=last_name
-                        )
-                    else:
-                        # If last_name is not provided, create user without it
-                        user = User.objects.create_user(
-                            username=email,
-                            email=email,
-                            first_name=first_name
-                        )
-
-                # Log the user in
-                login(request, user)
-
-                return JsonResponse({"message": "User logged in successfully"}, status=200)
-
-            return JsonResponse({"error": "Invalid token"}, status=400)
-
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
-    return JsonResponse({"error": "Invalid method"}, status=405)
+                    if not user:
+                        # Create a new user, use last_name if available
+                        if last_name:
+                            user = User.objects.create_user(
+                                username=email,
+                                email=email,
+                                first_name=first_name,
+                                last_name=last_name
+                            )
+                        else:
+                            # If last_name is not provided, create user without it
+                            user = User.objects.create_user(
+                                username=email,
+                                email=email,
+                                first_name=first_name
+                            )
+                    # Log the user in
+                    login(request, user)
+                    return JsonResponse({"message": "User logged in successfully"}, status=200)
+                return JsonResponse({"error": "Invalid token"}, status=400)
+            except Exception as e:
+                return JsonResponse({"error": str(e)}, status=500)
+        return JsonResponse({"error": "Invalid method"}, status=405)

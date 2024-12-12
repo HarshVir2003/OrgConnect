@@ -16,7 +16,7 @@ Including another URLconfADMIN_USER_ID
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import PasswordResetConfirmView, PasswordResetRequestView, google_login
+from .views import PasswordResetConfirmView, PasswordResetRequestView, GoogleLoginView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework.permissions import AllowAny
@@ -45,7 +45,7 @@ urlpatterns = [
 
     path('auth/', include('social_django.urls', namespace='social')),
     path('accounts', include('allauth.urls')),
-    path('auth/google/', google_login, name='google_login'),
+    path('auth/google/', GoogleLoginView.as_view(), name='google_login'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='redoc-ui'),
 
