@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     # 'daphne',
+    'drf_yasg',
     'allauth',  # Django allauth
     'allauth.account',  # Allauth account module
     'allauth.socialaccount',
@@ -196,3 +197,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'orgconnectdotorg@gmail.com'
 EMAIL_HOST_PASSWORD = config('GOOGLE_APP_PASSWORD')
+
