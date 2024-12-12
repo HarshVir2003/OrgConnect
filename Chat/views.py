@@ -132,7 +132,58 @@ class SendReferAPIView(APIView):
 class GetChatHistoryAPIView(APIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
-
+    @swagger_auto_schema(
+        operation_description="Retrieve the chat history of a specific Rocket.Chat room",
+        operation_summary="Fetch chat history",
+        manual_parameters=[
+            openapi.Parameter(
+                'id',  # The room ID parameter in the path
+                openapi.IN_PATH,
+                type=openapi.TYPE_STRING,
+                description="A unique string value identifying this Rocket.Chat room",
+                required=True,
+            ),
+            openapi.Parameter(
+                'count',  # The query parameter to limit the number of messages
+                openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Number of messages to retrieve (default is 50)",
+                required=False,
+            ),
+        ],
+        responses={
+            200: openapi.Response(
+                description="Successful retrieval of chat history",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'messages': openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    '_id': openapi.Schema(type=openapi.TYPE_STRING),
+                                    'msg': openapi.Schema(type=openapi.TYPE_STRING),
+                                    'u': openapi.Schema(
+                                        type=openapi.TYPE_OBJECT,
+                                        properties={
+                                            '_id': openapi.Schema(type=openapi.TYPE_STRING),
+                                            'username': openapi.Schema(type=openapi.TYPE_STRING),
+                                            'name': openapi.Schema(type=openapi.TYPE_STRING)
+                                        }
+                                    ),
+                                    'rid': openapi.Schema(type=openapi.TYPE_STRING),
+                                    'ts': openapi.Schema(type=openapi.TYPE_STRING),
+                                }
+                            )
+                        ),
+                        'success': openapi.Schema(type=openapi.TYPE_BOOLEAN),
+                    }
+                )
+            ),
+            400: openapi.Response(description="Invalid room ID or count parameter")
+        }
+    )
     def get(self, request, id=None):
         """
         Retrieve chat history from Rocket.Chat.

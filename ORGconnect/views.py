@@ -1,5 +1,5 @@
 import json
-
+from drf_yasg import openapi
 import requests
 from allauth.account.views import login
 from django.core.mail import send_mail
@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.csrf import csrf_exempt
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -23,11 +24,22 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 
 
-
 class PasswordResetConfirmView(APIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
 
+    @swagger_auto_schema(
+        operation_summary='Password reset confirm page.',
+        operation_description='send in the password',
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'password': openapi.Schema(type=openapi.TYPE_STRING)
+            },
+            required=['password']
+        )
+
+    )
     def post(self, request, uidb64, token):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
@@ -49,6 +61,18 @@ class PasswordResetRequestView(APIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
 
+    @swagger_auto_schema(
+        operation_summary='Password reset request page.',
+        operation_description='send in the email',
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'email': openapi.Schema(type=openapi.TYPE_STRING)
+            },
+            required=['email']
+        )
+
+    )
     def post(self, request):
         email = request.data.get('email')
         try:
@@ -122,4 +146,3 @@ def google_login(request):
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid method"}, status=405)
-
