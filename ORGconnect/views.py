@@ -99,7 +99,6 @@ class GoogleLoginView(APIView):
     @swagger_auto_schema(
         operation_summary='Google Login Endpoint.',
     )
-    @csrf_exempt
     def post(self, request):
         if request.method == "POST":
             try:
