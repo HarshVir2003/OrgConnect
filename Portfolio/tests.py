@@ -26,7 +26,7 @@ class PortfolioViewTestCase(APITestCase):
     def test_get_portfolios_no_id(self):
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('portfolio-list'))
-        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_get_single_portfolio(self):
         self.client.login(username='testuser', password='testpass')
