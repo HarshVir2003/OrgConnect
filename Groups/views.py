@@ -15,6 +15,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from urllib.parse import quote
 from Groups.serializer import GroupSerializer
+from Groups.serializer import GroupDeleteSerializer, CommunityDeleteSerializer, ContactDeleteSerializer
 
 
 # Create your views here.
@@ -114,7 +115,6 @@ class MembersView(APIView):
             return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-# todo: create delete for the following views
 class GroupsView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = GroupSerializer
@@ -159,6 +159,19 @@ class GroupsView(ListCreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
+    def delete(self, request, *args, **kwargs):
+        serializer = GroupDeleteSerializer(data=request.data)
+        if serializer.is_valid():
+            if Group.objects.filter(name=request.data.get('group_name'),
+                                    community=request.data.get('community_name')).exists():
+                Group.objects.filter(name=request.data.get('group_name'),
+                                     community=request.data.get('community_name')).delete()
+                return Response({"message": 'Group delete successfully.'}, status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+
 
 class CommunityView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -168,8 +181,8 @@ class CommunityView(ListCreateAPIView):
         return Community.objects.filter(admins=self.request.user)
 
     @swagger_auto_schema(
-        operation_summary="This Port is used to get all the community's user is admin of.",
-        operation_description='Here we only get the communities which user is admin of as for the one user is member of, we are get that object id from the group.'
+        operation_summary="Get all the community's user is admin of.",
+        operation_description='only get the communities which user is admin of as for the one user is member of, get that object id from the group.'
 
     )
     def get(self, request, *args, **kwargs):
@@ -204,6 +217,17 @@ class CommunityView(ListCreateAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
+
+    def delete(self, request, *args, **kwargs):
+        serializer = CommunityDeleteSerializer(data=request.data)
+        if serializer.is_valid():
+            if Community.objects.filter(name=request.data.get('name')).exists():
+                Community.objects.filter(name=request.data.get('name')).delete()
+                return Response({'message': 'Successfully deleted'}, status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
 
 class ContactView(ListCreateAPIView):
@@ -245,3 +269,14 @@ class ContactView(ListCreateAPIView):
             contact = Contacts.objects.create(user=user, friend=friend)
             return Response(ContactsSerializer(contact).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
+
+    def delete(self, request, *args, **kwargs):
+        serializer = ContactDeleteSerializer(data=request.data)
+        if serializer.is_valid():
+            if Contacts.objects.filter(user=request.user, friend=request.data.get('friend')).exists():
+                Contacts.objects.filter(user=request.user, friend=request.data.get('friend')).delete()
+                return Response({"message": "Successfully deleted."}, status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
