@@ -18,7 +18,7 @@ class Posts(models.Model):
     id = models.AutoField(User, primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length=10000)
-    image_url = models.ImageField(upload_to=get_name_of_file, null=True)
+    image_url = models.ImageField(upload_to=get_name_of_file, null=True, blank=True)
     created_at = models.DateTimeField(auto_now=True)
     Privacy_level = models.IntegerField(
         choices=PrivacyLevel.choices,

@@ -10,6 +10,8 @@ class PostsSerializer(serializers.ModelSerializer):
         model = Posts
         fields = '__all__'
 
+    image_url = serializers.ImageField(allow_null=True, required=False)
+
     def get_like_count(self, obj):
         return Likes.objects.filter(post_id=obj.id).count()
 

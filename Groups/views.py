@@ -1,6 +1,11 @@
+from django.contrib.gis.gdal.prototypes.geom import ogr_equals
 from django.shortcuts import render, HttpResponse
+from pycparser.ply.ctokens import t_PERIOD
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from sqlparse.engine.grouping import group
 
 from Groups.models import Community, Group, Contacts
 from Groups.serializer import GroupSerializer, ContactsSerializer, CommunitySerializer, MemberSerializer
@@ -9,6 +14,7 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from urllib.parse import quote
+from Groups.serializer import GroupSerializer
 
 
 # Create your views here.
@@ -17,6 +23,11 @@ class MembersView(APIView):
     serializer_class = MemberSerializer
     http_method_names = ['get', 'post', 'delete']
 
+    @swagger_auto_schema(
+        operation_summary='Getting all members of the groups.',
+        operation_description='pass in the id of the group for which, we want the members list.',
+
+    )
     def get(self, request, id: int | None = None) -> Response:
         if id is None:
             return Response({'message': 'No id provided!'}, status=status.HTTP_400_BAD_REQUEST)
@@ -32,6 +43,16 @@ class MembersView(APIView):
         except Group.DoesNotExist:
             return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
 
+    @swagger_auto_schema(
+        operation_summary='Add user to the group.',
+        operation_description='pass in the username of the person to be added in the group, pass in the group id in the path.',
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'username': openapi.Schema(type=openapi.TYPE_STRING)
+            }
+        )
+    )
     def post(self, request, id: int | None = None) -> Response:
         try:
             group = Group.objects.get(id=id)
@@ -57,6 +78,16 @@ class MembersView(APIView):
         except Group.DoesNotExist:
             return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
 
+    @swagger_auto_schema(
+        operation_summary='Delete the user form the group.',
+        operation_description='pass in the id for the group in the path and pass in the username as json.',
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'username': openapi.Schema(type=openapi.TYPE_STRING)
+            }
+        )
+    )
     def delete(self, request, id: int | None = None) -> Response:
         try:
             group = Group.objects.get(id=id)
@@ -83,18 +114,42 @@ class MembersView(APIView):
             return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
+# todo: create delete for the following views
 class GroupsView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = GroupSerializer
+    http_method_names = ['get', 'post', 'del']
 
     def get_queryset(self):
         return Group.objects.filter(members=self.request.user)
 
+    @swagger_auto_schema(
+        operation_summary='Get the groups list which use is part of.',
+        operation_description="No parameter's required for this one",
+    )
     def get(self, request, *args, **kwargs):
         data = self.get_queryset()
         serializer = self.get_serializer(data, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_summary='Create the group.',
+        operation_description="pass in all the data for the group you want to make.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'name': openapi.Schema(type=openapi.TYPE_STRING),
+                'profile_img': openapi.Schema(type=openapi.TYPE_FILE),
+                'members': openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    items=openapi.Items(type=openapi.TYPE_INTEGER)
+                ),
+                'community': openapi.Schema(type=openapi.TYPE_INTEGER, description="community's id")
+
+            }
+        )
+
+    )
     def post(self, request, *args, **kwargs):
         serializer = GroupSerializer(data=request.data)
         if serializer.is_valid():
@@ -112,11 +167,33 @@ class CommunityView(ListCreateAPIView):
     def get_queryset(self):
         return Community.objects.filter(admins=self.request.user)
 
+    @swagger_auto_schema(
+        operation_summary="This Port is used to get all the community's user is admin of.",
+        operation_description='Here we only get the communities which user is admin of as for the one user is member of, we are get that object id from the group.'
+
+    )
     def get(self, request, *args, **kwargs):
         data = self.get_queryset()
         serializer = self.get_serializer(data, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_summary='This is used to create communities.',
+        operation_description='Here we can create a community.',
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'name': openapi.Schema(type=openapi.TYPE_STRING),
+                'profile_img': openapi.Schema(type=openapi.TYPE_FILE),
+                'admins': openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    items=openapi.Items(type=openapi.TYPE_INTEGER)
+                ),
+                'description': openapi.Schema(type=openapi.TYPE_STRING)
+
+            }
+        )
+    )
     def post(self, request, *args, **kwargs):
         serializer = CommunitySerializer(data=request.data)
         if serializer.is_valid():
@@ -136,11 +213,30 @@ class ContactView(ListCreateAPIView):
     def get_queryset(self):
         return Contacts.objects.filter(user=self.request.user)
 
+    @swagger_auto_schema(
+        operation_summary='this is used to get all the friends of the user.',
+        operation_description='this port return all the friends user had added to his account.',
+
+    )
     def get(self, request, *args, **kwargs):
         data = self.get_queryset()
         serializer = self.get_serializer(data, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_summary='this is used add friend to user account.',
+        operation_description='this port create a object in which user and friend id described in a relation',
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'user': openapi.Schema(type=openapi.TYPE_INTEGER),
+                'friend': openapi.Schema(type=openapi.TYPE_INTEGER),
+            },
+            required=['user', 'friend']
+
+        )
+
+    )
     def post(self, request, *args, **kwargs):
         serializer = ContactsSerializer(data=request.data)
         if serializer.is_valid():
