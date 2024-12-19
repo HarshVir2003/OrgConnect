@@ -7,20 +7,14 @@ from django.http import JsonResponse
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.urls import reverse
-from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode
-from django.views.decorators.csrf import csrf_exempt
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from social_django.utils import psa
-from rest_framework_simplejwt.tokens import RefreshToken
+from decouple import config
 from django.contrib.auth.models import User
 
 
@@ -138,7 +132,11 @@ class GoogleLoginView(APIView):
                                 first_name=first_name
                             )
                     # Log the user in
+
                     login(request, user)
+                    url = f'{config('ROCKET_URL')}/chat/create-user'
+                    requests.post(url, json={'username': email, 'email': email,
+                                             'password': email})
                     return JsonResponse({"message": "User logged in successfully"}, status=200)
                 return JsonResponse({"error": "Invalid token"}, status=400)
             except Exception as e:

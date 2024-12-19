@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 import requests
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+from decouple import config
 
 
 @swagger_auto_schema(
@@ -51,7 +51,7 @@ class UserRegister(APIView):
                     login(request, user)
 
                     # register user for chat app
-                    url = 'http://localhost:8000/chat/create-user'
+                    url = f'{config('ROCKET_URL')}/chat/create-user'
                     requests.post(url, json={'username': request.data['username'], 'email': request.data['email'],
                                              'password': request.data['password']})
 
