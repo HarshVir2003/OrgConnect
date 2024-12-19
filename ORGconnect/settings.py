@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-import os
 from pathlib import Path
 from decouple import config
 
@@ -107,7 +106,6 @@ WSGI_APPLICATION = 'ORGconnect.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# todo: change to env for prod.
 use_postgres = config('USE_POSTGRE', cast=bool)
 
 if use_postgres:
