@@ -20,14 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# todo: change to env for prod.
-SECRET_KEY = 'django-insecure-6pw(1eqqpe(=g&0!^ni%v3bi3w$0lpq#wr6-33klwg%4!^8@si'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-# todo: change to env for prod.
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(',')
 
 # Application definition
 
@@ -198,3 +196,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'orgconnectdotorg@gmail.com'
 EMAIL_HOST_PASSWORD = config('GOOGLE_APP_PASSWORD')
 
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True

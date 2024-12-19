@@ -1,19 +1,13 @@
-from django.contrib.gis.gdal.prototypes.geom import ogr_equals
-from django.shortcuts import render, HttpResponse
-from pycparser.ply.ctokens import t_PERIOD
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from sqlparse.engine.grouping import group
-
 from Groups.models import Community, Group, Contacts
-from Groups.serializer import GroupSerializer, ContactsSerializer, CommunitySerializer, MemberSerializer
+from Groups.serializer import ContactsSerializer, CommunitySerializer, MemberSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from urllib.parse import quote
 from Groups.serializer import GroupSerializer
 from Groups.serializer import GroupDeleteSerializer, CommunityDeleteSerializer, ContactDeleteSerializer
 

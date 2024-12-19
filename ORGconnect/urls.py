@@ -28,7 +28,7 @@ schema_view = get_schema_view(
         description="API endpoints for the backend application",
     ),
     public=True,
-    permission_classes=(AllowAny,),
+    permission_classes=[AllowAny,],
 )
 
 urlpatterns = [
