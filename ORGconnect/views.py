@@ -18,6 +18,7 @@ from decouple import config
 from django.contrib.auth.models import User
 
 
+ROCKET_CHAT_URL =config('ROCKET_URL')
 class PasswordResetConfirmView(APIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
@@ -134,7 +135,7 @@ class GoogleLoginView(APIView):
                     # Log the user in
 
                     login(request, user)
-                    url = f'{config('ROCKET_URL')}/chat/create-user'
+                    url = f'{ROCKET_CHAT_URL}/chat/create-user'
                     requests.post(url, json={'username': email, 'email': email,
                                              'password': email})
                     return JsonResponse({"message": "User logged in successfully"}, status=200)

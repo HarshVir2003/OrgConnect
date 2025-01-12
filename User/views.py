@@ -11,6 +11,8 @@ import requests
 from drf_yasg.utils import swagger_auto_schema
 from decouple import config
 
+ROCKET_CHAT_URL = config('ROCKET_URL')
+
 
 @swagger_auto_schema(
     operation_summary='Get profile of user.',
@@ -51,7 +53,7 @@ class UserRegister(APIView):
                     login(request, user)
 
                     # register user for chat app
-                    url = f'{config('ROCKET_URL')}/chat/create-user'
+                    url = f'{ROCKET_CHAT_URL}/chat/create-user'
                     requests.post(url, json={'username': request.data['username'], 'email': request.data['email'],
                                              'password': request.data['password']})
 
@@ -111,7 +113,7 @@ class LogoutView(APIView):
 class ProfileView(APIView):
     @swagger_auto_schema(
         operation_summary='GET current user\'s id.',
-        responses={302: 'user is logged in.', 401: 'user not authenticated.', 200:None}
+        responses={302: 'user is logged in.', 401: 'user not authenticated.', 200: None}
     )
     def get(self, request):
         if request.user.is_authenticated:
