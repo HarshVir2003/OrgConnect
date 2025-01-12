@@ -31,6 +31,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(',')
 INSTALLED_APPS = [
     # 'daphne',
     'drf_yasg',
+    'corsheaders',
     'allauth',  # Django allauth
     'allauth.account',  # Allauth account module
     'allauth.socialaccount',
@@ -64,6 +65,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config('GOOGLE_CLIENT_SECRECT')
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -196,3 +198,10 @@ EMAIL_HOST_PASSWORD = config('GOOGLE_APP_PASSWORD')
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'https://orgconnect.raghuanand.tech',
+]
+
+CORS_ALLOW_CREDENTIALS = True
