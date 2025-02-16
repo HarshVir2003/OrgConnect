@@ -113,9 +113,9 @@ class LogoutView(APIView):
 class ProfileView(APIView):
     @swagger_auto_schema(
         operation_summary='GET current user\'s id.',
-        responses={302: 'user is logged in.', 401: 'user not authenticated.', 200: None}
+        responses={200: 'user is logged in.', 401: 'user not authenticated.'}
     )
     def get(self, request):
         if request.user.is_authenticated:
-            return redirect(reverse('User', kwargs={'id': request.user.id}))
+            return Response({'user-id': request.user.id}, status=status.HTTP_200_OK)
         return Response({"message": "Not Authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
