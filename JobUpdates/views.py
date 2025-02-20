@@ -1,19 +1,19 @@
-from django.shortcuts import render
 from django.urls import reverse
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from django.shortcuts import redirect
 from JobUpdates.models import JobUpdates
 from rest_framework import status
-from JobUpdates.serializer import JobUpdatesSerializer
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from .serializer import JobUpdatesSerializer
 
+
 # Create your views here.
 
 class JobUpdatesView(ListAPIView):
+    permission_classes = [IsAuthenticated]
     http_method_names = ['get']
     queryset = JobUpdates.objects.all()
     serializer_class = JobUpdatesSerializer
