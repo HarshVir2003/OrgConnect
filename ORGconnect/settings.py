@@ -207,7 +207,8 @@ CSRF_COOKIE_NAME = 'csrftoken'
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
-    'https://orgconnect.raghuanand.tech',
+    'https://orgconnect.org',
+    'https://backend.orgconnect.org'
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -220,7 +221,8 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
-    'https://orgconnect.raghuanand.tech',
+    'https://backend.orgconnect.org',
+    'https://orgconnect.org'
 ]
 
 SESSION_COOKIE_SAMESITE = 'None'
