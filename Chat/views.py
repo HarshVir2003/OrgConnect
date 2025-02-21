@@ -6,7 +6,7 @@ from rest_framework import status
 import json
 from .linkbuiilder import get_room_id
 from drf_yasg import openapi
-from .roket_chat_helper import create_user, send_message, get_chat_history
+from .roket_chat_helper import create_user, send_message, get_chat_history, login_user
 from django.contrib.auth.models import User
 
 
@@ -65,7 +65,10 @@ class SendMessageAPIView(APIView):
             return Response({"error": "Missing fields"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Send a message to a Rocket.Chat room
-        response = send_message(room_id, message)
+        user_id, user_token = login_user(username=request.user.username,
+                                         email=request.user.email,
+                                         password=request.user.username+'@orgconnect.org')
+        response = send_message(room_id, message, user_id=user_id, user_token=user_token)
         if response.get("success"):
             return Response({"message": "Message sent successfully."}, status=status.HTTP_200_OK)
         else:
@@ -119,7 +122,10 @@ class SendReferAPIView(APIView):
         serialized_message = json.dumps(message_content)
 
         # Send the message to the Rocket.Chat room
-        response = send_message(room_id, serialized_message)  # Assume send_message is defined elsewhere
+        user_id, user_token = login_user(username=request.user.username,
+                                         email=request.user.email,
+                                         password=request.user.username + '@orgconnect.org')
+        response = send_message(room_id, serialized_message, user_id=user_id, user_token=user_token)  # Assume send_message is defined elsewhere
         if response.get("success"):
             return Response({"message": "Message sent successfully."}, status=status.HTTP_200_OK)
         else:
@@ -198,7 +204,10 @@ class GetChatHistoryAPIView(APIView):
             return Response({"error": "count must be an integer"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Fetch chat history
-        history = get_chat_history(room_id, count)
+        user_id, user_token = login_user(username=request.user.username,
+                                         email=request.user.email,
+                                         password=request.user.username + '@orgconnect.org')
+        history = get_chat_history(room_id, count, user_id=user_id, user_token=user_token)
 
         if "error" in history:
             return Response(history["error"], status=status.HTTP_400_BAD_REQUEST)

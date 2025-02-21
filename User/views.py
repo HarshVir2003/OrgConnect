@@ -10,6 +10,7 @@ from django.urls import reverse
 import requests
 from drf_yasg.utils import swagger_auto_schema
 from decouple import config
+from Chat.roket_chat_helper import create_user
 
 ROCKET_CHAT_URL = config('ROCKET_URL')
 
@@ -53,10 +54,15 @@ class UserRegister(APIView):
                     login(request, user)
 
                     # register user for chat app
-                    url = f'{ROCKET_CHAT_URL}/chat/create-user'
-                    requests.post(url, json={'username': request.data['username'], 'email': request.data['email'],
-                                             'password': request.data['password']})
-
+                    # url = f'{ROCKET_CHAT_URL}/chat/create-user'
+                    # requests.post(url, json={'username': request.data['username'], 'email': request.data['email'],
+                    #                          'password': request.data['username'] + "@orgconnect.org"})
+                    create_user(
+                        name=request.data['username'],
+                        username=request.data['username'],
+                        email=request.data['email'],
+                        password=request.data['username'] + "@orgconnect.org"
+                    )
                     # redirect to user profile page
                     return Response({'message': 'Logged in.'}, status=status.HTTP_200_OK)
                 else:

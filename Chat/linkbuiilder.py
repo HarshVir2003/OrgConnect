@@ -13,8 +13,8 @@ class ChatLinkMaker:
         encoded = base64.b64encode(word.encode("utf-8"))
         encoded = encoded.decode('utf-8')
         url = f'{ROCKET_CHAT_URL}/api/v1/channels.create'
-        payload = {'name' : encoded}
-        requests.post(url, json=payload, headers=get_headers())
+        payload = {'name': encoded}
+        requests.post(url, json=payload, headers=get_headers(admin=True))
         return encoded
 
 
@@ -22,7 +22,7 @@ def get_room_id(room_name):
     """Fetch the roomId for a given channel name."""
     url = f"{ROCKET_CHAT_URL}/api/v1/channels.info"
     params = {"roomName": room_name}
-    response = requests.get(url, headers=get_headers(), params=params)
+    response = requests.get(url, headers=get_headers(admin=True), params=params)
     data = response.json()
 
     if data.get("success"):
