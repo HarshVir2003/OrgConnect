@@ -80,6 +80,7 @@ def get_chat_history(room_id, count=100, **kwargs):
     else:
         return {"error": response.json()}  # Return the error response
 
+
 def login_user(username, email, password):
     url = f"{ROCKET_CHAT_URL}/api/v1/login"
     payload = {
@@ -91,7 +92,7 @@ def login_user(username, email, password):
     # print(data)
     if data.get('status') == 'success':
         # print(data['data']['authToken'], data['data']['userId'])
-        return  data['data']['userId'],data['data']['authToken']
+        return data['data']['userId'], data['data']['authToken']
     else:
         create_user(username, username, email, password)
         return login_user(username, email, password)

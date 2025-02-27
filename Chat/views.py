@@ -67,7 +67,7 @@ class SendMessageAPIView(APIView):
         # Send a message to a Rocket.Chat room
         user_id, user_token = login_user(username=request.user.username,
                                          email=request.user.email,
-                                         password=request.user.username+'@orgconnect.org')
+                                         password=request.user.username + '@orgconnect.org')
         response = send_message(room_id, message, user_id=user_id, user_token=user_token)
         if response.get("success"):
             return Response({"message": "Message sent successfully."}, status=status.HTTP_200_OK)
@@ -125,7 +125,8 @@ class SendReferAPIView(APIView):
         user_id, user_token = login_user(username=request.user.username,
                                          email=request.user.email,
                                          password=request.user.username + '@orgconnect.org')
-        response = send_message(room_id, serialized_message, user_id=user_id, user_token=user_token)  # Assume send_message is defined elsewhere
+        response = send_message(room_id, serialized_message, user_id=user_id,
+                                user_token=user_token)  # Assume send_message is defined elsewhere
         if response.get("success"):
             return Response({"message": "Message sent successfully."}, status=status.HTTP_200_OK)
         else:
@@ -135,6 +136,7 @@ class SendReferAPIView(APIView):
 class GetChatHistoryAPIView(APIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
+
     @swagger_auto_schema(
         operation_description="Retrieve the chat history of a specific Rocket.Chat room",
         operation_summary="Fetch chat history",

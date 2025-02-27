@@ -4,6 +4,8 @@ from decouple import config
 from Chat.roket_chat_helper import get_headers
 
 ROCKET_CHAT_URL = config('ROCKET_URL')
+
+
 class ChatLinkMaker:
     def __init__(self, user1, user2):
         self.lis = sorted([user1, user2])

@@ -118,6 +118,7 @@ class LogoutView(APIView):
 
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
+
     @swagger_auto_schema(
         operation_summary='GET current user\'s id.',
         responses={200: 'user is logged in.', 401: 'user not authenticated.'}
