@@ -47,8 +47,9 @@ class UserRegister(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             User_object = User.objects.filter(username=request.data['username']).exists()
+            email_exists = User.objects.filter(email=request.data['email']).exists()
             if request.data['username']:
-                if not User_object:
+                if not User_object and not email_exists:
                     serializer.save()
                     user = authenticate(username=request.data['username'], password=request.data['password'])
                     login(request, user)
