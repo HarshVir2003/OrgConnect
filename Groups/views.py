@@ -5,7 +5,7 @@ from drf_yasg.utils import swagger_auto_schema
 from Groups.models import Community, Group, Contacts
 from Groups.serializer import ContactsSerializer, CommunitySerializer, MemberSerializer
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from Groups.serializer import GroupSerializer
@@ -274,3 +274,10 @@ class ContactView(ListCreateAPIView):
                 return Response(status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
+
+
+class CommunityIdView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CommunitySerializer
+    queryset = Community.objects.all()
+    lookup_field = 'id'
