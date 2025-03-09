@@ -12,6 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
     password_confirm = serializers.CharField(write_only=True, required=True, style={"input_type": 'password'})
+    image = serializers.ImageField(required=False)
 
     class Meta:
         model = CustomUser

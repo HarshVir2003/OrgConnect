@@ -11,6 +11,7 @@ import requests
 from drf_yasg.utils import swagger_auto_schema
 from decouple import config
 from Chat.roket_chat_helper import create_user
+from rest_framework.parsers import MultiPartParser, FormParser
 
 ROCKET_CHAT_URL = config('ROCKET_URL')
 
@@ -30,6 +31,7 @@ class UserList(generics.RetrieveAPIView):
 class UserRegister(APIView):
     permission_classes = [AllowAny]
     http_method_names = ['post']
+    parser_classes = [MultiPartParser, FormParser]
 
     # def get(self, request, *args, **kwargs):
     #     serializer = UserRegistrationSerializer()

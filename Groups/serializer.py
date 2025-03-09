@@ -21,6 +21,8 @@ class ContactsSerializer(ModelSerializer):
 
 
 class CommunitySerializer(ModelSerializer):
+    profile_img = serializers.ImageField(required=False)
+    admins = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, required=False)
     class Meta:
         model = Community
         fields = ['id', 'name', 'description', 'profile_img', 'admins']

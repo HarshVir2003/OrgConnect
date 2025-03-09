@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from Groups.serializer import GroupSerializer
 from Groups.serializer import GroupDeleteSerializer, CommunityDeleteSerializer, ContactDeleteSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 # Create your views here.
@@ -113,6 +114,7 @@ class GroupsView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = GroupSerializer
     http_method_names = ['get', 'post', 'del']
+    parser_classes = [MultiPartParser, FormParser]
 
     def get_queryset(self):
         return Group.objects.filter(members=self.request.user)
@@ -170,6 +172,7 @@ class GroupsView(ListCreateAPIView):
 class CommunityView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CommunitySerializer
+    parser_classes = [MultiPartParser, FormParser]
 
     def get_queryset(self):
         return Community.objects.filter(admins=self.request.user)
@@ -204,10 +207,8 @@ class CommunityView(ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = CommunitySerializer(data=request.data)
         if serializer.is_valid():
-            if Community.objects.filter(name=request.data['name'], admins=request.user,
-                                        description=request.data['description'],
-                                        profile_img=request.data['profile_img']).exists():
-                return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
+            if Community.objects.filter(name=request.data['name'], description=request.data['description']).exists():
+                return Response({'message': 'Community already exists.'}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)

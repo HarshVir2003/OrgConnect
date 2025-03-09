@@ -9,6 +9,8 @@ from Feeds.Serializer import CommentsSerializers, LikesSerializers, PostsSeriali
 from Feeds.processing import DataBuilder
 from Feeds.pagination import CustomPagination
 from drf_yasg import openapi
+from rest_framework.parsers import MultiPartParser, FormParser
+
 
 page_param = openapi.Parameter(
     'page',
@@ -52,6 +54,7 @@ class PostsPostingView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = PostsSerializer
     http_method_names = ['post', 'delete']
+    parser_classes = [MultiPartParser, FormParser]
 
     @swagger_auto_schema(
         operation_summary="Post the User's post's here",
