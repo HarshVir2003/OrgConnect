@@ -34,7 +34,7 @@ def create_user(name, username, email, password):
         "pass": password
     }
     response = requests.post(url, json=payload, headers=get_headers(admin=True))
-    print(response.json())
+    # print(response.json())
     return response.json()
 
 
