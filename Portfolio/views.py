@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from Portfolio.models import PortfolioModel
 from Portfolio.Serializer import PortfolioSerializer
-from django.shortcuts import redirect
+
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
@@ -102,3 +102,4 @@ class PortfolioPostView(APIView):
             serializer.save(user_id=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
