@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 from pathlib import Path
-
+from datetime import timedelta
 from corsheaders.defaults import default_headers
 from decouple import config
 
@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'allauth',  # Django allauth
     'allauth.account',  # Allauth account module
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     'social_django',
+    'rest_framework.authtoken',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -80,13 +82,17 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.permissions.AllowAny'
     ]
 }
-
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=3)
+}
 ACCOUNT_SIGNUP_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 ROOT_URLCONF = 'ORGconnect.urls'
@@ -227,3 +233,20 @@ CSRF_TRUSTED_ORIGINS = [
 
 SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'
+SOCIAL_ACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['given_name', 'family_name', 'email', 'profile'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'OAUTH_PKCE_ENABLED': True,
+        'FETCH_USERINFO': True,
+        "APP": {
+            "client_id": config('GOOGLE_API_CLIENT_ID'),
+            "secret": config('GOOGLE_CLIENT_SECRECT'),
+            "key": "",
+        }
+    }
+}
+
+LOGIN_REDIRECT_URL = '/callback/'
+
+SOCIAL_ACCOUNT_STORE_TOKENS = True

@@ -16,11 +16,12 @@ Including another URLconfADMIN_USER_ID
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import PasswordResetConfirmView, PasswordResetRequestView, GoogleLoginView
+
+from .views import PasswordResetConfirmView, PasswordResetRequestView,GoogleLogin
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework.permissions import AllowAny
-
+from rest_framework_simplejwt.views import TokenRefreshView, TokenObtainPairView
 schema_view = get_schema_view(
     openapi.Info(
         title="API Documentation",
@@ -43,9 +44,19 @@ urlpatterns = [
     path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
     path('chat/', include('Chat.urls')),
 
-    path('auth/', include('social_django.urls', namespace='social')),
-    path('accounts', include('allauth.urls')),
-    path('auth/google/', GoogleLoginView.as_view(), name='google_login'),
+    # path('auth/', include('social_django.urls', namespace='social')),
+    path('api-auth/', include('rest_framework.urls')),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('accounts/', include('allauth.urls')),
+    path('auth/', include('dj_rest_auth.urls')),
+    path('auth/registration/', include('dj_rest_auth.registration.urls')),
+    path('auth/social', include('allauth.socialaccount.urls')),
+    path('auth/google/', GoogleLogin.as_view(), name='google_login'),
+
+
+
+
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='redoc-ui'),
 

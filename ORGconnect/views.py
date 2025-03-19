@@ -1,9 +1,9 @@
 import json
 from drf_yasg import openapi
-import requests
-from allauth.account.views import login
+from allauth.socialaccount.providers.oauth2.views import OAuth2Adapter
+from dj_rest_auth.registration.views import  SocialLoginView
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from django.core.mail import send_mail
-from django.http import JsonResponse
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.urls import reverse
@@ -90,56 +90,6 @@ class PasswordResetRequestView(APIView):
             return Response({'error': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class GoogleLoginView(APIView):
-    @swagger_auto_schema(
-        operation_summary='Google Login Endpoint.',
-    )
-    def post(self, request):
-        if request.method == "POST":
-            try:
-                data = json.loads(request.body)
-                id_token = data.get('id_token')
 
-                # Verify the token and get user info from Google
-                url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + id_token
-                response = requests.get(url)
-                if response.status_code == 200:
-                    user_info = response.json()
-                    email = user_info.get('email')
-                    first_name = user_info.get('given_name')
-                    last_name = user_info.get('family_name')  # This may or may not be available
-                    picture = user_info.get('picture')
-
-                    # # Print user info for debugging
-                    # print(user_info)
-
-                    # Check if the user already exists
-                    user = User.objects.filter(email=email).first()
-
-                    if not user:
-                        # Create a new user, use last_name if available
-                        if last_name:
-                            user = User.objects.create_user(
-                                username=email,
-                                email=email,
-                                first_name=first_name,
-                                last_name=last_name
-                            )
-                        else:
-                            # If last_name is not provided, create user without it
-                            user = User.objects.create_user(
-                                username=email,
-                                email=email,
-                                first_name=first_name
-                            )
-                    # Log the user in
-
-                    login(request, user)
-                    url = f'{ROCKET_CHAT_URL}/chat/create-user'
-                    requests.post(url, json={'username': email, 'email': email,
-                                             'password': email})
-                    return JsonResponse({"message": "User logged in successfully"}, status=200)
-                return JsonResponse({"error": "Invalid token"}, status=400)
-            except Exception as e:
-                return JsonResponse({"error": str(e)}, status=500)
-        return JsonResponse({"error": "Invalid method"}, status=405)
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter

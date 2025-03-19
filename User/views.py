@@ -1,7 +1,14 @@
+from allauth.account.internal.decorators import login_stage_required
+from allauth.socialaccount.models import SocialAccount, SocialToken
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
+import json
 from User.Serializer import UserSerializer, UserRegistrationSerializer, UserLoginSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -45,8 +52,9 @@ class UserRegister(APIView):
         operation_description='User Registration endpoint.',
         request_body=UserRegistrationSerializer
     )
+
     def post(self, request, *args, **kwargs):
-        serializer = UserRegistrationSerializer(data=request.data)
+        serializer = UserRegistrationSerializer(data=request.data, partial=True)
         if serializer.is_valid():
             User_object = User.objects.filter(username=request.data['username']).exists()
             email_exists = User.objects.filter(email=request.data['email']).exists()
@@ -129,3 +137,7 @@ class ProfileView(APIView):
     def get(self, request):
         if request.user.is_authenticated:
             return Response({'user-id': request.user.id}, status=status.HTTP_200_OK)
+
+
+
+
