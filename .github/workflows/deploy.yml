@@ -30,7 +30,7 @@ jobs:
           script: |
             cp /home/ubuntu/env/.env /home/ubuntu/OrgConnect
             cd /home/ubuntu/OrgConnect
-            sudo docker stop Org_Back_container || true
-            sudo docker rm Org_Back_container || true
-            sudo docker build -t Org_Back .
-            sudo docker run -d -p 8000:8000 --name Org_Back_container Org_Back
+            sudo docker stop org_back_container || true
+            sudo docker rm org_back_container || true
+            sudo docker build -t org_back .
+            sudo docker run -d -p 8000:8000 --name org_back_container org_back
