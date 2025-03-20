@@ -136,7 +136,7 @@ class ProfileView(APIView):
     )
     def get(self, request):
         if request.user.is_authenticated:
-            return Response({'user-id': request.user.id}, status=status.HTTP_200_OK)
+            return Response({'userId': request.user.id}, status=status.HTTP_200_OK)
 
 
 
