@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -90,6 +90,13 @@ class PasswordResetRequestView(APIView):
             return Response({'error': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
 
-
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
+
+
+class PingView(APIView):
+    http_method_names = ['get']
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        return Response({'ping': 'pong'}, status=status.HTTP_200_OK)

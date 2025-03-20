@@ -16,12 +16,12 @@ Including another URLconfADMIN_USER_ID
 """
 from django.contrib import admin
 from django.urls import path, include
-
-from .views import PasswordResetConfirmView, PasswordResetRequestView,GoogleLogin
+from .views import PasswordResetConfirmView, PasswordResetRequestView, GoogleLogin, PingView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenRefreshView, TokenObtainPairView
+
 schema_view = get_schema_view(
     openapi.Info(
         title="API Documentation",
@@ -43,6 +43,7 @@ urlpatterns = [
     path('password-reset/', PasswordResetRequestView.as_view(), name='password-reset'),
     path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
     path('chat/', include('Chat.urls')),
+    path('ping/', PingView.as_view(), name='ping'),
 
     # path('auth/', include('social_django.urls', namespace='social')),
     path('api-auth/', include('rest_framework.urls')),
@@ -54,10 +55,6 @@ urlpatterns = [
     path('auth/social', include('allauth.socialaccount.urls')),
     path('auth/google/', GoogleLogin.as_view(), name='google_login'),
 
-
-
-
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='redoc-ui'),
-
 ]
