@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from .serializer import JobUpdatesSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 # Create your views here.
@@ -21,6 +22,7 @@ class JobUpdatesView(ListAPIView):
 
 class JobPosting(APIView):
     permission_classes = [IsAdminUser]
+    parser_classes = [MultiPartParser, FormParser]
 
     # def get(self, request, *args, **kwargs):
     #     serializer = JobUpdatesSerializer()
