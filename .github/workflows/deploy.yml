@@ -1,0 +1,36 @@
+name: Deploy React App to EC2
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  EC2-Deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy Source Code to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "."
+          target: "/home/ubuntu/OrgConnect"
+
+      - name: SSH into EC2 and Build + Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cp /home/ubuntu/env/.env /home/ubuntu/OrgConnect
+            cd /home/ubuntu/OrgConnect
+            sudo docker stop org_back_container || true
+            sudo docker rm org_back_container || true
+            sudo docker build -t org_back .
+            sudo docker run -d -p 8000:8000 --name org_back_container org_back

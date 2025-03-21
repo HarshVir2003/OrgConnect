@@ -93,3 +93,11 @@ class PasswordResetRequestView(APIView):
 
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
+
+
+class PingView(APIView):
+    http_method_names = ['get']
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        return Response({'ping': 'pong'}, status=status.HTTP_200_OK)
