@@ -20,7 +20,7 @@ ROCKET_CHAT_URL = config('ROCKET_URL')
 
 
 class PasswordResetConfirmView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     queryset = User.objects.all()
 
     @swagger_auto_schema(
