@@ -1,5 +1,3 @@
-from datetime import timezone
-
 from rest_framework import serializers
 from JobUpdates.models import JobUpdates
 
