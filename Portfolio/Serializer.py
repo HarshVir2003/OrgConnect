@@ -217,7 +217,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
         if personal_details_data:
             deets = PersonalDetail.objects.create(**personal_details_data)
-            portfolio.personal_details.set(deets)
+            portfolio.personal_details = deets
 
         ls = []
         for language in languages_data:
