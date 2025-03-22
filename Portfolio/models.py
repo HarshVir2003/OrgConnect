@@ -39,7 +39,7 @@ class Publication(models.Model):
     conference_or_journal_name = models.CharField(max_length=255)
     paper_type = models.CharField(max_length=50,
                                   choices=[("Patent", "Patent"), ("Research Paper", "Research Paper"), ("Book", "Book"),
-                                           ("Book Chapter", "Book Chapter")])
+                                           ("Book Chapter", "Book Chapter"), ("Article", "Article")])
 
 
 class Course(models.Model):
