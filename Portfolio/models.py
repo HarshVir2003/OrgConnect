@@ -81,7 +81,7 @@ class Startup(models.Model):
 
 
 class Portfolio(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     bio = models.CharField(max_length=2048)
     location = models.CharField(max_length=1024, null=True, blank=True)
     website = models.URLField(max_length=1024, null=True, blank=True)
