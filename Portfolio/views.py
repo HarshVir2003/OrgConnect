@@ -158,5 +158,5 @@ class PortfolioIdView(ListAPIView):
         queryset = self.get_queryset()
         portfolio = queryset.filter(user=request.user)
         if portfolio.exists():
-            return Response({'PortfolioId': portfolio.id}, status=status.HTTP_200_OK)
+            return Response({'PortfolioId': portfolio[0].id}, status=status.HTTP_200_OK)
         return Response({'PortfolioId': 'Not Found'}, status=status.HTTP_404_NOT_FOUND)
