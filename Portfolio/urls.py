@@ -9,9 +9,11 @@
 
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-from .views import PortfolioViewSet
+from .views import PortfolioViewSet, PortfolioIdView
 
 router = DefaultRouter()
 router.register(r'', PortfolioViewSet, basename='portfolio')
 
-urlpatterns = router.urls
+urlpatterns = router.urls + [
+    path('get/id', PortfolioIdView.as_view())
+]

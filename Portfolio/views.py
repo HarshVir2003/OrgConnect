@@ -108,6 +108,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from .models import Portfolio
 from .Serializer import PortfolioSerializer
+from rest_framework.generics import ListAPIView
 
 
 class PortfolioViewSet(viewsets.ViewSet):
@@ -115,13 +116,13 @@ class PortfolioViewSet(viewsets.ViewSet):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def list(self, request):
-        portfolios = Portfolio.objects.filter(user_id=request.user)
+        portfolios = Portfolio.objects.filter(user=request.user)
         serializer = PortfolioSerializer(portfolios, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
         try:
-            portfolio = Portfolio.objects.get(pk=pk, user_id=request.user)
+            portfolio = Portfolio.objects.get(pk=pk, user=request.user)
         except Portfolio.DoesNotExist:
             return Response({'error': 'Portfolio not found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -140,9 +141,22 @@ class PortfolioViewSet(viewsets.ViewSet):
 
     def destroy(self, request, pk=None):
         try:
-            portfolio = Portfolio.objects.get(pk=pk, user_id=request.user)
+            portfolio = Portfolio.objects.get(pk=pk, user=request.user)
         except Portfolio.DoesNotExist:
             return Response({'error': 'Portfolio not found'}, status=status.HTTP_404_NOT_FOUND)
 
         portfolio.delete()
         return Response({'message': 'Portfolio deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class PortfolioIdView(ListAPIView):
+    queryset = Portfolio.objects.all()
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['get']
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        portfolio = queryset.filter(user=request.user)
+        if portfolio.exists():
+            return Response({'PortfolioId': portfolio.id}, status=status.HTTP_200_OK)
+        return Response({'PortfolioId': 'Not Found'}, status=status.HTTP_404_NOT_FOUND)
