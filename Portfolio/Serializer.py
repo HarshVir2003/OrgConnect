@@ -31,11 +31,6 @@ class WorkExperienceSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkExperience
         fields = '__all__'
-        extra_kwargs = {'title': {'required': False}}
-
-    def create(self, validated_data):
-        print(validated_data)
-        return WorkExperience.objects.create(**validated_data)
 
 
 class EducationDetailSerializer(serializers.ModelSerializer):
@@ -103,14 +98,12 @@ class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Language
         fields = '__all__'
-        extra_kwargs = {'language_name': {'required': False}}
 
 
 class StartupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Startup
         fields = '__all__'
-        extra_kwargs = {'name': {'required': False}}
 
 
 class PortfolioSerializer(serializers.ModelSerializer):
