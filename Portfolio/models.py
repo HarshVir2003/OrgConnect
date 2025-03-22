@@ -35,7 +35,7 @@ class Publication(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     link = models.URLField()
-    authors = models.JSONField()
+    authors = models.TextField()
     conference_or_journal_name = models.CharField(max_length=255)
     paper_type = models.CharField(max_length=50,
                                   choices=[("Patent", "Patent"), ("Research Paper", "Research Paper"), ("Book", "Book"),
