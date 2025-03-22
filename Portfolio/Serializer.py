@@ -191,7 +191,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
         for course in courses_data:
             obj = Course.objects.filter(**course)
             if not obj.exists():
-                Course.objects.create(**course)
+                obj = Course.objects.create(**course)
                 courses.append(obj)
             else:
                 courses.append(*obj)

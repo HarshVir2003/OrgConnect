@@ -46,7 +46,7 @@ class Course(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     course_link = models.URLField()
-    course_duration = models.CharField(max_length=255)
+    course_duration = models.FloatField()
     certificate_link = models.URLField(null=True, blank=True)
 
 
