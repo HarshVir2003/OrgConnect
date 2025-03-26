@@ -1,25 +1,3 @@
-# from rest_framework import serializers
-# from Portfolio.models import PortfolioModel
-#
-#
-# class PortfolioSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = PortfolioModel
-#         fields = [
-#             'bio',
-#             'location',
-#             'website',
-#             'birth_date',
-#             'linkedin_url',
-#             'github_url',
-#             'kaggle_url',
-#             'google_scholar_url',
-#         ]
-#
-#     def create(self, validated_data):
-#         portfolio_object = PortfolioModel.objects.create(**validated_data)
-#         return portfolio_object
-
 from rest_framework import serializers
 from .models import (
     Portfolio, WorkExperience, EducationDetail, Project, Publication, Course,
@@ -205,7 +183,9 @@ class PortfolioSerializer(serializers.ModelSerializer):
             obj = Award.objects.filter(**award)
             if not obj.exists():
                 obj = Award.objects.create(**award)
-            awards.append(obj)
+                awards.append(obj)
+            else:
+                awards.append(*obj)
         portfolio.awards.set(awards)
 
         if personal_details_data:
