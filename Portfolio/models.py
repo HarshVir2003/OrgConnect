@@ -85,7 +85,6 @@ class Portfolio(models.Model):
     bio = models.CharField(max_length=2048)
     location = models.CharField(max_length=1024, null=True, blank=True)
     website = models.URLField(max_length=1024, null=True, blank=True)
-    birth_date = models.DateField()
     linkedin_url = models.URLField(null=True, blank=True)
     github_url = models.URLField(null=True, blank=True)
     kaggle_url = models.URLField(null=True, blank=True)
