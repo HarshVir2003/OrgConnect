@@ -132,6 +132,9 @@ class PortfolioViewSet(viewsets.ViewSet):
     def create(self, request):
         data = request.data.copy()
         data['user'] = request.user.id  # Ensure portfolio belongs to logged-in user
+        obj = Portfolio.objects.filter(user=request.user.id)
+        if obj.exists():
+            return Response({'message': "Portfolio for user already exists."}, status=status.HTTP_400_BAD_REQUEST)
         serializer = PortfolioSerializer(data=data)
 
         if serializer.is_valid():
