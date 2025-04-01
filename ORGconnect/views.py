@@ -77,7 +77,7 @@ class PasswordResetRequestView(APIView):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             # reset_url = request.build_absolute_uri(
             #     reverse('password-reset-confirm', kwargs={'uidb64': uid, 'token': token}))
-            reset_url = f'https://orgconnect.org/{uid}/{token}'
+            reset_url = f'https://orgconnect.org/password-reset/{uid}/{token}'
 
             # Send the email
             send_mail(
