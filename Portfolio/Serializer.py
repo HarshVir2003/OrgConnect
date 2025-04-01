@@ -263,8 +263,6 @@ class PortfolioSerializer(serializers.ModelSerializer):
             update = []
             delete = []
 
-            print(data)
-
             for x in data:
                 if x:
                     if x.get('delete', False):
