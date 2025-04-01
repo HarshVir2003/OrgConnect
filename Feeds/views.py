@@ -141,11 +141,13 @@ class CommentView(APIView):
                          operation_description='here we can create a post comment pass in required data',
                          request_body=CommentsSerializers)
     def post(self, request):
+        request.data['user_id'] = request.user
         serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
+
     @swagger_auto_schema(operation_summary='delete a comment', operation_description='pass in comment id to delete the comment')
     def delete(self, request, id=None):
         if not id:
