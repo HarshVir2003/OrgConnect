@@ -263,14 +263,17 @@ class PortfolioSerializer(serializers.ModelSerializer):
             update = []
             delete = []
 
+            print(data)
+
             for x in data:
-                if x.get('delete', False):
-                    x.pop('delete')
-                    delete.append(x)
-                elif x.get('id', None) is not None:
-                    update.append(x)
-                else:
-                    add.append(x)
+                if x:
+                    if x.get('delete', False):
+                        x.pop('delete')
+                        delete.append(x)
+                    elif x.get('id', None) is not None:
+                        update.append(x)
+                    else:
+                        add.append(x)
 
             return [add, update, delete]
 
@@ -340,5 +343,22 @@ class PortfolioSerializer(serializers.ModelSerializer):
         elif delete_personal:
             instance.personal_details = None
             instance.save()
+
+        add_projects, update_projects, delete_projects = segregrate_data(projects_data)
+
+        projs = []
+        if add_projects:
+            serial = ProjectSerializer()
+            for proj in add_projects:
+                projs.append(serial.create(proj))
+
+            for x in projs:
+                instance.projects.add(x)
+
+        if delete_projects:
+            for proj in delete_projects:
+                obj = instance.projects.filter(id=proj.get('id'))
+                if obj.exists():
+                    instance.projects.remove(*obj)
 
         return instance
