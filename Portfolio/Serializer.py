@@ -326,4 +326,19 @@ class PortfolioSerializer(serializers.ModelSerializer):
         patch_helper(Language, 'languages', languages_data)
         patch_helper(Startup, 'startups', startup_data)
 
+        add_personal, update_personal, delete_personal = segregrate_data([personal_details_data])
+
+        if add_personal:
+            obj = PersonalDetail.objects.create(**add_personal[0])
+            instance.personal_details = obj
+            instance.save()
+        elif update_personal:
+            obj = PersonalDetail.objects.filter(id=update_personal[0].get('id'))
+            obj.delete()
+            instance.personal_details = PersonalDetail.objects.create(**update_personal[0])
+            instance.save()
+        elif delete_personal:
+            instance.personal_details = None
+            instance.save()
+
         return instance
