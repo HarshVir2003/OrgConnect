@@ -131,19 +131,7 @@ class GroupsView(ListCreateAPIView):
     @swagger_auto_schema(
         operation_summary='Create the group.',
         operation_description="pass in all the data for the group you want to make.",
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'name': openapi.Schema(type=openapi.TYPE_STRING),
-                'profile_img': openapi.Schema(type=openapi.TYPE_FILE),
-                'members': openapi.Schema(
-                    type=openapi.TYPE_ARRAY,
-                    items=openapi.Items(type=openapi.TYPE_INTEGER)
-                ),
-                'community': openapi.Schema(type=openapi.TYPE_INTEGER, description="community's id")
-
-            }
-        )
+        request_body=GroupSerializer
 
     )
     def post(self, request, *args, **kwargs):
@@ -190,19 +178,7 @@ class CommunityView(ListCreateAPIView):
     @swagger_auto_schema(
         operation_summary='This is used to create communities.',
         operation_description='Here we can create a community.',
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'name': openapi.Schema(type=openapi.TYPE_STRING),
-                'profile_img': openapi.Schema(type=openapi.TYPE_FILE),
-                'admins': openapi.Schema(
-                    type=openapi.TYPE_ARRAY,
-                    items=openapi.Items(type=openapi.TYPE_INTEGER)
-                ),
-                'description': openapi.Schema(type=openapi.TYPE_STRING)
-
-            }
-        )
+        request_body=CommunitySerializer
     )
     def post(self, request, *args, **kwargs):
         serializer = CommunitySerializer(data=request.data)

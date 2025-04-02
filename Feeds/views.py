@@ -59,33 +59,7 @@ class PostsPostingView(APIView):
     @swagger_auto_schema(
         operation_summary="Post the User's post's here",
         operation_description='post the valid data.',
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'content': openapi.Schema(
-                    type=openapi.TYPE_STRING,
-                    description='Content of the post',
-                    example="This is a post"
-                ),
-                'Privacy_level': openapi.Schema(
-                    type=openapi.TYPE_INTEGER,
-                    description='Privacy level of the post. 0 = Public, 1 = Friends Only, etc.',
-                    example=0
-                ),
-                'user_id': openapi.Schema(
-                    type=openapi.TYPE_INTEGER,
-                    description='ID of the user who is posting',
-                    example=0
-                ),
-                'image_url': openapi.Schema(
-                    type=openapi.TYPE_FILE,
-                    description='image (optional). Can be null. pass image object url is build in backend',
-                    example=None,
-                    nullable=True
-                ),
-            },
-            required=['content', 'Privacy_level', 'user_id'],  # Required fields in the POST request
-        )
+        request_body=PostsSerializer
 
     )
     def post(self, request):

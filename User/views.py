@@ -1,20 +1,10 @@
-from allauth.account.internal.decorators import login_stage_required
-from allauth.socialaccount.models import SocialAccount, SocialToken
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
-import json
 from User.Serializer import UserSerializer, UserRegistrationSerializer, UserLoginSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.shortcuts import redirect
-from django.urls import reverse
-import requests
 from drf_yasg.utils import swagger_auto_schema
 from decouple import config
 from Chat.roket_chat_helper import create_user
@@ -52,7 +42,6 @@ class UserRegister(APIView):
         operation_description='User Registration endpoint.',
         request_body=UserRegistrationSerializer
     )
-
     def post(self, request, *args, **kwargs):
         serializer = UserRegistrationSerializer(data=request.data, partial=True)
         if serializer.is_valid():
