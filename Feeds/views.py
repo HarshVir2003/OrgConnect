@@ -115,8 +115,12 @@ class CommentView(APIView):
                          operation_description='here we can create a post comment pass in required data',
                          request_body=CommentsSerializers)
     def post(self, request):
-        request.data['user_id'] = request.user
-        serializer = self.serializer_class(data=request.data, context={'request': request})
+        d = dict(request.data)
+        d.pop('user_id', 0)
+        for x in d:
+            d[x] = d[x][0]
+        d['user_id'] = request.user.id
+        serializer = self.serializer_class(data=d, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
