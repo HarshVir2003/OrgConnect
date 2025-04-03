@@ -130,7 +130,7 @@ class CommentView(APIView):
         if not id:
             return Response({'message': 'no comment'}, status=status.HTTP_404_NOT_FOUND)
         try:
-            comment = Comments.objects.get(user_id=request.user, id=id)
+            comment = Comments.objects.get(user_id=request.user.id, id=id)
         except Comments.DoesNotExist:
             return Response({'message': 'comment doesnot exist'}, status=status.HTTP_404_NOT_FOUND)
 
