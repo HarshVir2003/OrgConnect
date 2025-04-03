@@ -11,7 +11,6 @@ from Feeds.pagination import CustomPagination
 from drf_yasg import openapi
 from rest_framework.parsers import MultiPartParser, FormParser
 
-
 page_param = openapi.Parameter(
     'page',
     openapi.IN_QUERY,
@@ -80,7 +79,8 @@ class PostsPostingView(APIView):
 
     @swagger_auto_schema(
         operation_summary="Delete a post",
-        operation_description="Deletes a post if it belongs to the authenticated user. Requires the post ID to be provided in the URL.", )
+        operation_description=
+        "Deletes a post if it belongs to the authenticated user. Requires the post ID to be provided in the URL.", )
     def delete(self, request, id=None):
         if not id:
             return Response({'message': 'id missing'}, status=status.HTTP_404_NOT_FOUND)
@@ -125,14 +125,15 @@ class CommentView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
-    @swagger_auto_schema(operation_summary='delete a comment', operation_description='pass in comment id to delete the comment')
+    @swagger_auto_schema(operation_summary='delete a comment',
+                         operation_description='pass in comment id to delete the comment')
     def delete(self, request, id=None):
         if not id:
             return Response({'message': 'no comment'}, status=status.HTTP_404_NOT_FOUND)
         try:
             comment = Comments.objects.get(user_id=request.user.id, id=id)
         except Comments.DoesNotExist:
-            return Response({'message': 'comment doesnot exist'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': 'comment does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
         comment.delete()
         return Response({'message': 'comment deleted successfully'}, status=status.HTTP_200_OK)
@@ -141,14 +142,26 @@ class CommentView(APIView):
 class LikeView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = LikesSerializers
-    http_method_names = ['post', 'delete']
-    @swagger_auto_schema(operation_summary='Like a post',operation_description='pass in the data to like a post', request_body=LikesSerializers)
+    http_method_names = ['get', 'post', 'delete']
+
+    def get(self, request, id=None):
+        if not id:
+            return Response({"message": "Not a valid GET requeest"}, status=status.HTTP_400_BAD_REQUEST)
+        user_id = request.user.id
+        obj = Likes.objects.filter(user_id=user_id, post_id=id)
+        if obj.exists():
+            return Response({"Like": True}, status=status.HTTP_200_OK)
+        return Response({"Like": False}, status=status.HTTP_204_NO_CONTENT)
+
+    @swagger_auto_schema(operation_summary='Like a post', operation_description='pass in the data to like a post',
+                         request_body=LikesSerializers)
     def post(self, request):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
+
     @swagger_auto_schema(operation_summary='dislike a post', operation_description='pass in the post id to dislike')
     def delete(self, request, id=None):
         if not id:
@@ -157,7 +170,7 @@ class LikeView(APIView):
             post = Posts.objects.get(id=id)
             like = Likes.objects.get(user_id=request.user, post_id=post.id)
         except Likes.DoesNotExist:
-            return Response({'message': 'like doesnot exist'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': 'like does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
         like.delete()
         return Response({'message': 'disliked'}, status=status.HTTP_200_OK)
