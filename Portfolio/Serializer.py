@@ -7,7 +7,7 @@ from .models import (
 
 class WorkExperienceSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    delete = serializers.BooleanField(required=False, default=False, write_only=True)
+    delete = serializers.BooleanField(required=False, write_only=True)
 
     class Meta:
         model = WorkExperience
@@ -16,7 +16,7 @@ class WorkExperienceSerializer(serializers.ModelSerializer):
 
 class EducationDetailSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    delete = serializers.BooleanField(required=False, default=False, write_only=True)
+    delete = serializers.BooleanField(required=False, write_only=True)
 
     class Meta:
         model = EducationDetail
@@ -25,7 +25,7 @@ class EducationDetailSerializer(serializers.ModelSerializer):
 
 class SkillSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    delete = serializers.BooleanField(required=False, default=False, write_only=True)
+    delete = serializers.BooleanField(required=False, write_only=True)
 
     class Meta:
         model = Skill
@@ -35,7 +35,7 @@ class SkillSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     tech_used = SkillSerializer(many=True)
     id = serializers.IntegerField(required=False)
-    delete = serializers.BooleanField(required=False, default=False, write_only=True)
+    delete = serializers.BooleanField(required=False, write_only=True)
 
     class Meta:
         model = Project
@@ -61,7 +61,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class PublicationSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    delete = serializers.BooleanField(required=False, default=False, write_only=True)
+    delete = serializers.BooleanField(required=False, write_only=True)
 
     class Meta:
         model = Publication
@@ -70,7 +70,7 @@ class PublicationSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    delete = serializers.BooleanField(required=False, default=False, write_only=True)
+    delete = serializers.BooleanField(required=False, write_only=True)
 
     class Meta:
         model = Course
@@ -79,7 +79,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
 class AwardSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    delete = serializers.BooleanField(required=False, default=False, write_only=True)
+    delete = serializers.BooleanField(required=False, write_only=True)
 
     class Meta:
         model = Award
@@ -88,7 +88,7 @@ class AwardSerializer(serializers.ModelSerializer):
 
 class PersonalDetailSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    delete = serializers.BooleanField(required=False, default=False, write_only=True)
+    delete = serializers.BooleanField(required=False, write_only=True)
 
     class Meta:
         model = PersonalDetail
@@ -97,7 +97,7 @@ class PersonalDetailSerializer(serializers.ModelSerializer):
 
 class LanguageSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    delete = serializers.BooleanField(required=False, default=False, write_only=True)
+    delete = serializers.BooleanField(required=False, write_only=True)
 
     class Meta:
         model = Language
@@ -106,7 +106,7 @@ class LanguageSerializer(serializers.ModelSerializer):
 
 class StartupSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    delete = serializers.BooleanField(required=False, default=False, write_only=True)
+    delete = serializers.BooleanField(required=False, write_only=True)
 
     class Meta:
         model = Startup
