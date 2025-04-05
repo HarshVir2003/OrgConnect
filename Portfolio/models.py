@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from MediaManagement.file_name import get_name_of_file
 
 
 class WorkExperience(models.Model):
@@ -89,6 +90,7 @@ class Portfolio(models.Model):
     github_url = models.URLField(null=True, blank=True)
     kaggle_url = models.URLField(null=True, blank=True)
     google_scholar_url = models.URLField(null=True, blank=True)
+    resume = models.FileField(upload_to=get_name_of_file, blank=True, null=True)
 
     work_experiences = models.ManyToManyField(WorkExperience, related_name="portfolios", blank=True)
     education_details = models.ManyToManyField(EducationDetail, related_name="portfolios", blank=True)
