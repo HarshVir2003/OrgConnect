@@ -359,4 +359,15 @@ class PortfolioSerializer(serializers.ModelSerializer):
                 if obj.exists():
                     instance.projects.remove(*obj)
 
+        instance.bio = validated_data.get('bio', instance.bio)
+        instance.website = validated_data.get('website', instance.website)
+        instance.linkedin_url = validated_data.get('linkedin_url', instance.linkedin_url)
+        instance.github_url = validated_data.get('github_url', instance.github_url)
+        instance.kaggle_url = validated_data.get('kaggle_url', instance.kaggle_url)
+        instance.google_scholar_url = validated_data.get('google_scholar_url', instance.google_scholar_url)
+        instance.location = validated_data.get('location', instance.location)
+        instance.resume = validated_data.get('resume', instance.resume)
+
+        instance.save()
+
         return instance
