@@ -1,8 +1,8 @@
 from rest_framework import viewsets, status
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
-from rest_framework.views import APIView
 from .models import Portfolio
 from .Serializer import PortfolioSerializer
 
@@ -62,7 +62,7 @@ class PortfolioViewSet(viewsets.ViewSet):
         return Response({'message': 'Portfolio deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
 
-class PortfolioIdView(APIView):
+class PortfolioIdView(ListAPIView):
     queryset = Portfolio.objects.all()
     permission_classes = [IsAuthenticated]
     http_method_names = ['get']
