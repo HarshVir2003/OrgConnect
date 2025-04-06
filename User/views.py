@@ -156,3 +156,23 @@ class UserImageView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserIdImageView(APIView):
+    serializer_class = ImageUserSerializer
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['get']
+
+    def get(self, request, id=None):
+        if id is None:
+            return Response({"message": 'No Id Provided.'}, status=status.HTTP_400_BAD_REQUEST)
+        user = User.objects.filter(id=id)
+        if user.exists():
+            user = user[0]
+        else:
+            return Response({"message": 'invalid user id.'}, status=status.HTTP_404_NOT_FOUND)
+        obj = UserImage.objects.filter(user=user)
+        if obj.exists():
+            serializer = self.serializer_class(*obj)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'message': 'No Image found'}, status=status.HTTP_404_NOT_FOUND)
