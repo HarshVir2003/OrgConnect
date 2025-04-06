@@ -13,7 +13,6 @@ from .models import UserImage
 
 ROCKET_CHAT_URL = config('ROCKET_URL')
 
-# todo: add patch for image in register.
 # todo: login to rocket chat after google signup.
 
 @swagger_auto_schema(
