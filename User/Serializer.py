@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from User.models import CustomUser
+from User.models import CustomUser, UserImage
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,7 +16,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'email', 'password', 'password_confirm', 'image']
+        fields = ['first_name', 'last_name', 'username', 'email', 'password', 'password_confirm']
 
     def validate(self, data):
         if data['password'] != data['password_confirm']:
@@ -35,3 +35,16 @@ class UserLoginSerializer(serializers.Serializer):
 
     class Meta:
         fields = ['username', 'password']
+
+
+class ImageUserSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField()
+
+    class Meta:
+        model = UserImage
+        fields = ['image']
+
+    def update(self, instance, validated_data):
+        instance.image = validated_data['image']
+        instance.save()
+        return instance

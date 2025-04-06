@@ -2,16 +2,19 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from User.Serializer import UserSerializer, UserRegistrationSerializer, UserLoginSerializer
+from User.Serializer import UserSerializer, UserRegistrationSerializer, UserLoginSerializer, ImageUserSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from decouple import config
 from Chat.roket_chat_helper import create_user
 from rest_framework.parsers import MultiPartParser, FormParser
+from .models import UserImage
 
 ROCKET_CHAT_URL = config('ROCKET_URL')
 
+# todo: add patch for image in register.
+# todo: login to rocket chat after google signup.
 
 @swagger_auto_schema(
     operation_summary='Get profile of user.',
@@ -42,6 +45,7 @@ class UserRegister(APIView):
         operation_description='User Registration endpoint.',
         request_body=UserRegistrationSerializer
     )
+    # todo: remove partial=True.
     def post(self, request, *args, **kwargs):
         serializer = UserRegistrationSerializer(data=request.data, partial=True)
         if serializer.is_valid():
@@ -128,5 +132,28 @@ class ProfileView(APIView):
             return Response({'userId': request.user.id}, status=status.HTTP_200_OK)
 
 
+class UserImageView(APIView):
+    serializer_class = ImageUserSerializer
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['get', 'patch']
+    parser_classes = [MultiPartParser, FormParser]
 
+    def get(self, request):
+        obj = UserImage.objects.filter(user=request.user)
+        if obj.exists():
+            serializer = self.serializer_class(*obj)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"message": "No image found"}, status=status.HTTP_404_NOT_FOUND)
 
+    def patch(self, request):
+        img = request.data.get('image', None)
+        if img is None:
+            return Response({"message": 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+        obj = UserImage.objects.filter(user=request.user)
+        if not obj.exists():
+            obj = [UserImage.objects.create(user=request.user)]
+        serializer = self.serializer_class(*obj, data={"image": img}, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

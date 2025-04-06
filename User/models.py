@@ -1,6 +1,6 @@
 from io import BytesIO
 from PIL import Image
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
 from django.core.files.base import ContentFile
 from django.db import models
 from MediaManagement.file_name import get_name_of_file
@@ -31,7 +31,16 @@ class CustomUser(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    image = models.ImageField(upload_to=get_name_of_file, null=True)
+
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+
+class UserImage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=get_name_of_file)
 
     def save(self, *args, **kwargs):
         if self.image:
@@ -43,8 +52,3 @@ class CustomUser(AbstractBaseUser):
             buffer.seek(0)
             self.file = ContentFile(buffer.read(), name=self.image.name)
         super().save(*args, **kwargs)
-
-    objects = CustomUserManager()
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
