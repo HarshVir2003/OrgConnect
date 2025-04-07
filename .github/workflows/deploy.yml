@@ -32,5 +32,5 @@ jobs:
             cd /home/ubuntu/OrgConnect
             sudo docker stop org_back_container || true
             sudo docker rm org_back_container || true
-            sudo docker build -t org_back .
+            sudo docker build --no-cache -t org_back .
             sudo docker run -d -p 8000:8000 --name org_back_container org_back
