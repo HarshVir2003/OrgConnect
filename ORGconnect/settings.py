@@ -235,6 +235,7 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
+    'localhost:3000',
     'https://backend.orgconnect.org',
     'https://orgconnect.org'
 ]
