@@ -241,6 +241,9 @@ CSRF_TRUSTED_ORIGINS = [
 
 SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'
+
+CSRF_HEADER_NAME = None
+
 SOCIAL_ACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': ['given_name', 'family_name', 'email', 'profile'],
