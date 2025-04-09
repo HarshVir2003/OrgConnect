@@ -233,13 +233,11 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
     'X-CSRFToken',  # Add csrftoken header to the allowed headers
 ]
 
-# CSRF_TRUSTED_ORIGINS = [
-#     'http://localhost:3000',
-#     'https://backend.orgconnect.org',
-#     'https://orgconnect.org/'
-# ]
-
-CSRF_COOKIE_DOMAIN = '.orgconnect.org'
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'https://backend.orgconnect.org',
+    'https://orgconnect.org/'
+]
 
 SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'
