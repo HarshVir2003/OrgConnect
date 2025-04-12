@@ -15,5 +15,6 @@ router = DefaultRouter()
 router.register(r'', PortfolioViewSet, basename='portfolio')
 
 urlpatterns = router.urls + [
-    path('get/id', PortfolioIdView.as_view())
+    path('get/id/<int:user_id>/', PortfolioIdView.as_view()),
+    path('get/id/', PortfolioIdView.as_view())
 ]

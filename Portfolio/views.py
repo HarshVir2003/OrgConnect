@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from .models import Portfolio
 from .Serializer import PortfolioSerializer
+from django.contrib.auth.models import User
 
 
 class PortfolioViewSet(viewsets.ViewSet):
@@ -67,9 +68,20 @@ class PortfolioIdView(ListAPIView):
     permission_classes = [IsAuthenticated]
     http_method_names = ['get']
 
-    def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        portfolio = queryset.filter(user=request.user)
-        if portfolio.exists():
-            return Response({'PortfolioId': portfolio[0].id}, status=status.HTTP_200_OK)
-        return Response({'PortfolioId': 'Not Found'}, status=status.HTTP_404_NOT_FOUND)
+    def get(self, request, user_id=None, *args, **kwargs):
+        if user_id is None:
+            queryset = self.get_queryset()
+            portfolio = queryset.filter(user=request.user)
+            if portfolio.exists():
+                return Response({'PortfolioId': portfolio[0].id}, status=status.HTTP_200_OK)
+            return Response({'PortfolioId': 'Not Found'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            user_obj = User.objects.filter(id=user_id)
+            if user_obj.exists():
+                queryset = self.get_queryset()
+                portfolio = queryset.filter(user=user_obj[0])
+                if portfolio.exists():
+                    return Response({"PortfolioId": portfolio[0].id}, status=status.HTTP_200_OK)
+                return Response({"message": 'No portfolio found for this user.'}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                return Response({"message": 'invalid id'}, status=status.HTTP_404_NOT_FOUND)
