@@ -19,7 +19,7 @@ class PortfolioViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         try:
-            portfolio = Portfolio.objects.get(pk=pk, user=request.user)
+            portfolio = Portfolio.objects.get(pk=pk)
         except Portfolio.DoesNotExist:
             return Response({'error': 'Portfolio not found'}, status=status.HTTP_404_NOT_FOUND)
 
