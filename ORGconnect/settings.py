@@ -226,7 +226,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-
+CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_HTTPONLY = False
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
@@ -234,13 +234,16 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
-    'https://backend.orgconnect.org',
     'https://orgconnect.org'
+    'http://localhost:3000',
+    # 'https://backend.orgconnect.org',
 ]
 
 SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'
+
+CSRF_HEADER_NAME = None
+
 SOCIAL_ACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': ['given_name', 'family_name', 'email', 'profile'],
