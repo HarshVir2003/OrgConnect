@@ -31,7 +31,7 @@ class MembersView(APIView):
             group = Group.objects.get(id=id)
             community = Community.objects.get(id=group.community.id)
             if not community.admins.filter(id=request.user.id).exists():
-                return Response({'message': 'not Authorised'}, status=status.HTTP_403_FORBIDDEN)
+                return Response({'message': 'not Authorised'}, status=status.HTTP_401_UNAUTHORIZED)
 
             members = group.members.all()
             serializer = self.serializer_class(members, many=True)
@@ -54,7 +54,7 @@ class MembersView(APIView):
             group = Group.objects.get(id=id)
             community = Community.objects.get(id=group.community.id)
             if not community.admins.filter(id=request.user.id).exists():
-                return Response({'message': 'not Authorised'}, status=status.HTTP_403_FORBIDDEN)
+                return Response({'message': 'not Authorised'}, status=status.HTTP_401_UNAUTHORIZED)
             username = request.data.get('username')
             if username:
                 try:
@@ -192,8 +192,9 @@ class CommunityView(ListCreateAPIView):
     def delete(self, request, *args, **kwargs):
         serializer = CommunityDeleteSerializer(data=request.data)
         if serializer.is_valid():
-            if Community.objects.filter(name=request.data.get('name')).exists():
-                Community.objects.filter(name=request.data.get('name')).delete()
+            obj = Community.objects.filter(name=request.data.get('name'))
+            if obj.exists():
+                obj.delete()
                 return Response({'message': 'Successfully deleted'}, status=status.HTTP_204_NO_CONTENT)
             else:
                 return Response(status=status.HTTP_404_NOT_FOUND)
@@ -244,8 +245,9 @@ class ContactView(ListCreateAPIView):
     def delete(self, request, *args, **kwargs):
         serializer = ContactDeleteSerializer(data=request.data)
         if serializer.is_valid():
-            if Contacts.objects.filter(user=request.user, friend=request.data.get('friend')).exists():
-                Contacts.objects.filter(user=request.user, friend=request.data.get('friend')).delete()
+            obj = Contacts.objects.filter(user=request.user, friend=request.data.get('friend'))
+            if obj.exists():
+                obj.delete()
                 return Response({"message": "Successfully deleted."}, status=status.HTTP_204_NO_CONTENT)
             else:
                 return Response(status=status.HTTP_404_NOT_FOUND)
