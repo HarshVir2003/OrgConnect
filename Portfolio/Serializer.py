@@ -89,6 +89,8 @@ class AwardSerializer(serializers.ModelSerializer):
 class PersonalDetailSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     delete = serializers.BooleanField(required=False, write_only=True)
+    address = serializers.CharField(required=False)
+    phone_number = serializers.CharField(required=False)
 
     class Meta:
         model = PersonalDetail
