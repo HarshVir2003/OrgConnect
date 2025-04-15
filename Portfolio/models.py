@@ -41,6 +41,7 @@ class Publication(models.Model):
     paper_type = models.CharField(max_length=50,
                                   choices=[("Patent", "Patent"), ("Research Paper", "Research Paper"), ("Book", "Book"),
                                            ("Book Chapter", "Book Chapter"), ("Article", "Article")])
+    date = models.DateField()
 
 
 class Course(models.Model):
