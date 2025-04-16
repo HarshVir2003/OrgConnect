@@ -34,8 +34,6 @@ REST_AUTH_SERIALIZERS = {
     'TOKEN_SERIALIZER': 'dj_rest_auth.serializers.JWTSerializer',
 }
 
-
-
 INSTALLED_APPS = [
     # 'daphne',
     'drf_yasg',
@@ -78,12 +76,12 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
 ]
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -93,7 +91,6 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.permissions.AllowAny'
     ],
     'DEFAULT_THROTTLE_CLASSES': [
@@ -106,6 +103,12 @@ REST_FRAMEWORK = {
     }
 }
 
+REST_AUTH = {
+    'USE_JWT': True,
+    # 'JWT_AUTH_COOKIE': 'access',
+    # 'JWT_AUTH_REFRESH_COOKIE': 'refresh',
+}
+# JWT_AUTH_HTTPONLY = False
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
@@ -226,9 +229,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'orgconnectdotorg@gmail.com'
 EMAIL_HOST_PASSWORD = config('GOOGLE_APP_PASSWORD')
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_NAME = 'csrftoken'
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_NAME = 'csrftoken'
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
@@ -237,26 +240,28 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CSRF_COOKIE_HTTPONLY = False
-SESSION_COOKIE_HTTPONLY = False
+# CSRF_COOKIE_HTTPONLY = False
+# SESSION_COOKIE_HTTPONLY = False
 
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    'X-CSRFToken',
-    'X-Google-Access-Token'  # Add csrftoken header to the allowed headers
-]
+# CORS_ALLOW_HEADERS = list(default_headers) + [
+#     'X-CSRFToken',
+#     'X-Google-Access-Token'  # Add csrftoken header to the allowed headers
+# ]
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://orgconnect.org',
-    'http://localhost:3000',
-    'https://backend.orgconnect.org',
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://orgconnect.org',
+#     'http://localhost:3000',
+#     'https://backend.orgconnect.org',
+# ]
 
-SESSION_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_SAMESITE = 'None'
+# SESSION_COOKIE_SAMESITE = 'None'
+# CSRF_COOKIE_SAMESITE = 'None'
 
 # CSRF_HEADER_NAME = None
 REST_USE_JWT = True
 
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 SOCIAL_ACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': ['given_name', 'family_name', 'email', 'profile'],
