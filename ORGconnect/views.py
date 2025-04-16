@@ -1,5 +1,7 @@
+from django.views.decorators.csrf import requires_csrf_token
 from drf_yasg import openapi
 from dj_rest_auth.registration.views import  SocialLoginView
+from dj_rest_auth.serializers import JWTSerializer
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode
@@ -95,9 +97,10 @@ class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
 
 
+
 class PingView(APIView):
     http_method_names = ['get']
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         return Response({'ping': 'pong'}, status=status.HTTP_200_OK)

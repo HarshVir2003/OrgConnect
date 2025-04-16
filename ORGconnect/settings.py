@@ -29,11 +29,19 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(',')
 
 # Application definition
+REST_AUTH_SERIALIZERS = {
+    'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.JWTSerializer',
+    'TOKEN_SERIALIZER': 'dj_rest_auth.serializers.JWTSerializer',
+}
+
+
 
 INSTALLED_APPS = [
     # 'daphne',
     'drf_yasg',
     'corsheaders',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
     'allauth',  # Django allauth
     'allauth.account',  # Allauth account module
     'allauth.socialaccount',
@@ -69,7 +77,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config('GOOGLE_CLIENT_SECRECT')
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -82,7 +90,7 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -97,9 +105,12 @@ REST_FRAMEWORK = {
         'user': '1000/day'
     }
 }
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=3)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
 }
 ACCOUNT_SIGNUP_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
@@ -230,7 +241,8 @@ CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_HTTPONLY = False
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
-    'X-CSRFToken',  # Add csrftoken header to the allowed headers
+    'X-CSRFToken',
+    'X-Google-Access-Token'  # Add csrftoken header to the allowed headers
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -243,6 +255,7 @@ SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'
 
 # CSRF_HEADER_NAME = None
+REST_USE_JWT = True
 
 SOCIAL_ACCOUNT_PROVIDERS = {
     'google': {
