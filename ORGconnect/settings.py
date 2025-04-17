@@ -248,11 +248,11 @@ CORS_ALLOW_CREDENTIALS = True
 #     'X-Google-Access-Token'  # Add csrftoken header to the allowed headers
 # ]
 
-# CSRF_TRUSTED_ORIGINS = [
-#     'https://orgconnect.org',
-#     'http://localhost:3000',
-#     'https://backend.orgconnect.org',
-# ]
+CSRF_TRUSTED_ORIGINS = [
+    'https://orgconnect.org',
+    'http://localhost:3000',
+    'https://backend.orgconnect.org',
+]
 
 # SESSION_COOKIE_SAMESITE = 'None'
 # CSRF_COOKIE_SAMESITE = 'None'
